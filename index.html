@@ -121,6 +121,84 @@
             border-radius: 0.25rem;
             margin-top: 1rem;
         }
+
+        /* ستايل سلة المشتريات - تم تعديله ليكون جزءًا من التصميم */
+        #shopping-cart {
+            width: 100%; /* تأخذ كامل العرض في الشاشات الصغيرة */
+            max-height: 70vh; /* أقصى ارتفاع للسلة */
+            background-color: #1f2937;
+            border: 2px solid #374151;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* للسماح بالتمرير داخل السلة */
+            /* أخفيها بشكل افتراضي بواسطة JS */
+        }
+        #shopping-cart-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1; /* لتأخذ المساحة المتاحة */
+        }
+        #shopping-cart-items li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #4a5568;
+            color: #cbd5e0;
+        }
+        #shopping-cart-items li:last-child {
+            border-bottom: none;
+        }
+        .cart-item-remove {
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .cart-item-remove:hover {
+            background-color: #dc2626;
+        }
+        .cart-total-info {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #374151;
+            color: #facc15;
+            font-weight: bold;
+        }
+        .cart-total-info span {
+            color: #cbd5e0;
+            font-weight: normal;
+        }
+
+        /* ستايل العنصر المتحرك */
+        .animated-item {
+            position: fixed; /* يجب أن يبقى fixed للأنيميشن */
+            background-color: #facc15;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #1f2937;
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.7);
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+            z-index: 2000;
+            pointer-events: none; /* لا يتفاعل مع أحداث الفأرة */
+        }
     </style>
 </head>
 <body class="bg-gray-950 text-gray-200 min-h-screen flex flex-col">
@@ -160,10 +238,10 @@
                 </div>
 
                 <!-- بطاقة قسم البنايات -->
-                <div class="category-card bg-purple-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="buildings-section">
-                    <span class="category-icon">🏰</span>
+                <div class="category-card bg-purple-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="items-section">
+                    <span class="category-icon">🏗️</span>
                     <h3 class="text-xl sm:text-2xl font-bold mb-2 text-purple-800 text-center">البنايات</h3>
-                    <p class="text-gray-300 text-sm sm:text-base text-center">دليل شامل للبنايات و وظائفها.</p>
+                    <p class="text-gray-300 text-sm sm:text-base text-center">دليل شامل للبنايات و المشتريات هنا.</p>
                 </div>
 
                 <!-- بطاقة قسم القواعد -->
@@ -233,18 +311,31 @@
                     </div>
                 </div>
 
-                <!-- قسم البنايات بالتفصيل -->
-                <div id="buildings-section" class="detailed-section hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">دليل البنايات</h3>
-                    <div id="buildings-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        <!-- Building items will be dynamically loaded here -->
+                <!-- قسم البنايات والمشتريات بالتفصيل -->
+                <div id="items-section" class="detailed-section hidden grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">البنايات والمشتريات</h3>
+                    <div id="items-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:col-span-3">
+                        <!-- Items will be dynamically loaded here -->
+                    </div>
+                    <!-- سلة المشتريات - تم نقلها داخل items-section -->
+                    <div id="shopping-cart" class="col-span-1 lg:col-span-1 bg-gray-700 p-4 rounded-xl shadow-lg border-2 border-gray-600">
+                        <h3 class="text-xl font-bold text-game-primary mb-4 text-center">سلة المشتريات</h3>
+                        <ul id="shopping-cart-items" class="flex-grow overflow-y-auto max-h-64">
+                            <!-- عناصر السلة ستظهر هنا -->
+                            <li class="text-gray-400 text-sm text-center">السلة فارغة.</li>
+                        </ul>
+                        <div class="cart-total-info">
+                            <p class="flex justify-between">السعر الإجمالي: <span id="cart-total-cost">0</span></p>
+                            <p class="flex justify-between">العائد الإجمالي: <span id="cart-total-yield">0</span></p>
+                        </div>
+                        <button id="copy-cart-names-btn" class="btn-game mt-4 w-full">نسخ الأسماء</button>
                     </div>
                 </div>
 
                 <!-- قسم القواعد بالتفصيل -->
-                <div id="rules-section" class="detailed-section hidden grid grid-cols-1 gap-4 sm:gap-6">
+                <div id="rules-section" class="detailed-section hidden grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">قواعد اللعبة</h3>
-                    <div id="rules-content" class="grid grid-cols-1 gap-4 sm:gap-6">
+                    <div id="rules-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         <!-- Rule items will be dynamically loaded here -->
                     </div>
                 </div>
@@ -268,15 +359,27 @@
             const mainTitle = document.getElementById('main-title');
             const searchInput = document.getElementById('search-input');
 
-            // عناصر الخريطة الجديدة
+            // عناصر الخريطة (في الصفحة الرئيسية)
             const mapImage = document.getElementById('map-image');
-            const mapLink = document.getElementById('map-link'); // الرابط الجديد للصورة
+            const mapLink = document.getElementById('map-link');
             const mapLegendsContainer = document.getElementById('map-legends-container');
+            // تم حذف openMapDrawingBtn لأنه لم يعد موجودًا في HTML
 
             // حاويات المحتوى الديناميكي
             const budgetsContent = document.getElementById('budgets-content');
-            const buildingsContent = document.getElementById('buildings-content');
+            const itemsContent = document.getElementById('items-content');
             const rulesContent = document.getElementById('rules-content');
+
+            // عناصر سلة المشتريات
+            const shoppingCart = document.getElementById('shopping-cart');
+            const shoppingCartItemsList = document.getElementById('shopping-cart-items');
+            const cartTotalCostSpan = document.getElementById('cart-total-cost');
+            const cartTotalYieldSpan = document.getElementById('cart-total-yield');
+            const copyCartNamesBtn = document.getElementById('copy-cart-names-btn');
+
+            let cartItems = []; // مصفوفة لتخزين عناصر السلة
+
+            // تم حذف عناصر المودال الجديدة للخريطة والمتغيرات المتعلقة بها
 
             // بيانات اللعبة المركزية
             const gameData = {
@@ -289,21 +392,21 @@
                     ]
                 },
                 budgets: [
-                    { name: "لمملكة الدورية", treasury: 185, output: 45, history: [100, 120, 150, 185] },
-                    { name: "امبراطورية سلطنستان", treasury: 185, output: 45, history: [90, 110, 140, 185] },
-                    { name: "مملكة مودستان", treasury: 185, output: 45, history: [110, 130, 160, 185] }
+                    { name: "لمملكة الدورية", treasury: 185, output: 45, history: [100, 120, 150, 185, 200, 190, 210] },
+                    { name: "امبراطورية سلطنستان", treasury: 185, output: 45, history: [90, 110, 140, 185, 170, 195, 205] },
+                    { name: "مملكة مودستان", treasury: 185, output: 45, history: [110, 130, 160, 185, 180, 200, 220] }
                 ],
-                buildings: [
-                    { icon: "⭐️", name: "مركز للدولة", description: "(ينصح للدول الكبيرة)", cost: "25.000", yield: "تثبيت الدولة" },
-                    { icon: "🛖", name: "قرية", description: "(إجباري)", cost: "200", yield: "قوة عاملة 50، ميزانية 25" },
-                    { icon: "�", name: "قلعة", description: "(تطوير 2× للقرية)", cost: "1000", yield: "قوة عاملة 250، ميزانية 125" },
-                    { icon: "🏛", name: "بنك", description: "(إجباري للحفاظ على الميزانية)", cost: "250", yield: "الحفاظ على الخزينة من الضياع، ميزانية 20" },
-                    { icon: "🎪", name: "مهرجان", description: "(لإضعاف الثورة)", cost: "300", yield: "ثبات الرأي العام" },
-                    { icon: "⚒️", name: "مصنع", description: "", cost: "350", yield: "الميزانية 75" },
-                    { icon: "⛏️", name: "منجم", description: "", cost: "350", yield: "الميزانية 80" },
-                    { icon: "🪖", name: "معسكر", description: "", cost: "300", yield: "ترتيب 5 كتائب" },
-                    { icon: "🛡", name: "الشرطة", description: "", cost: "150", yield: "الحفاظ على أمن الدولة" },
-                    { icon: "⚫️", name: "الجيش", description: "", cost: "200", yield: "ترتيب 1 كتيبة" }
+                items: [
+                    { id: 'center', icon: "⭐️", name: "مركز للدولة", description: "(ينصح للدول الكبيرة)", type: "بناية", cost: 25000, yield: "تثبيت الدولة" },
+                    { id: 'village', icon: "🛖", name: "قرية", description: "(إجباري)", type: "بناية", cost: 200, yield: "قوة عاملة 50، ميزانية 25" },
+                    { id: 'castle', icon: "🏰", name: "قلعة", description: "(تطوير 2× للقرية)", type: "بناية", cost: 1000, yield: "قوة عاملة 250، ميزانية 125" },
+                    { id: 'bank', icon: "🏛", name: "بنك", description: "(إجباري للحفاظ على الميزانية)", type: "بناية", cost: 250, yield: "الحفاظ على الخزينة من الضياع، ميزانية 20" },
+                    { id: 'festival', icon: "🎪", name: "مهرجان", description: "(لإضعاف الثورة)", type: "بناية", cost: 300, yield: "ثبات الرأي العام" },
+                    { id: 'factory', icon: "⚒️", name: "مصنع", description: "", type: "بناية", cost: 350, yield: "الميزانية 75" },
+                    { id: 'mine', icon: "⛏️", name: "منجم", description: "", type: "بناية", cost: 350, yield: "الميزانية 80" },
+                    { id: 'camp', icon: "🪖", name: "معسكر", description: "", type: "بناية", cost: 300, yield: "ترتيب 5 كتائب" },
+                    { id: 'police', icon: "🛡", name: "الشرطة", description: "", type: "بناية", cost: 150, yield: "الحفاظ على أمن الدولة" },
+                    { id: 'army', icon: "⚫️", name: "الجيش", description: "", type: "بناية", cost: 200, yield: "ترتيب 1 كتيبة" }
                 ],
                 rules: [
                     {
@@ -319,6 +422,34 @@
                             "<strong>احتياجات الشعب:</strong> الشعب يحتاج لخشب ومياه.",
                             "<strong>غلق الأنهار:</strong> يمكن غلق الأنهار.",
                             "<strong>تحريك الجيوش:</strong> يمكن تحريك الجيوش لأي مكان."
+                        ]
+                    },
+                    {
+                        title: "قواعد التجارة",
+                        items: [
+                            "<strong>البيع والشراء:</strong> يمكن للاعبين التجارة بالموارد فيما بينهم.",
+                            "<strong>الأسعار:</strong> تحدد الأسعار حسب العرض والطلب أو اتفاق اللاعبين."
+                        ]
+                    },
+                    {
+                        title: "قواعد الدبلوماسية",
+                        items: [
+                            "<strong>التحالفات:</strong> يمكن للدول عقد تحالفات عسكرية أو اقتصادية.",
+                            "<strong>إعلان الحرب:</strong> يجب إعلان الحرب بشكل رسمي قبل الهجوم."
+                        ]
+                    },
+                    {
+                        title: "قواعد البناء والترقية",
+                        items: [
+                            "<strong>متطلبات البناء:</strong> كل بناية تتطلب موارد ووقتاً للبناء.",
+                            "<strong>حدود البناء:</strong> قد تكون هناك حدود لعدد معين من البنايات لكل دولة."
+                        ]
+                    },
+                    {
+                        title: "قواعد الموارد الطبيعية",
+                        items: [
+                            "<strong>المناجم والغابات:</strong> الموارد تتجدد ببطء مع مرور الوقت.",
+                            "<strong>احتلال الموارد:</strong> السيطرة على مناطق الموارد تزيد من إنتاجك."
                         ]
                     }
                 ]
@@ -379,6 +510,100 @@
                 }
             }
 
+            // وظائف سلة المشتريات
+            function updateCartDisplay() {
+                shoppingCartItemsList.innerHTML = '';
+                let totalCost = 0;
+                let totalYield = 0;
+
+                if (cartItems.length === 0) {
+                    shoppingCartItemsList.innerHTML = '<li class="text-gray-400 text-sm text-center">السلة فارغة.</li>';
+                } else {
+                    cartItems.forEach((item, index) => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <span>${item.icon} ${item.name}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500">${item.cost}</span>
+                                <span class="cart-item-remove" data-index="${index}">X</span>
+                            </div>
+                        `;
+                        shoppingCartItemsList.appendChild(listItem);
+                        totalCost += item.cost;
+                        // جمع العائد إذا كان رقمًا، وإلا تجاهله أو تعامل معه كنص
+                        if (typeof item.yield === 'number') {
+                            totalYield += item.yield;
+                        } else if (typeof item.yield === 'string' && !isNaN(parseFloat(item.yield))) {
+                            // محاولة استخراج رقم من النص إذا كان ممكنًا
+                            totalYield += parseFloat(item.yield.match(/\d+/)?.[0] || 0);
+                        }
+                    });
+                }
+
+                cartTotalCostSpan.textContent = totalCost;
+                cartTotalYieldSpan.textContent = totalYield;
+
+                // إضافة مستمعي الأحداث لأزرار الحذف
+                shoppingCartItemsList.querySelectorAll('.cart-item-remove').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        removeItemFromCart(index);
+                    });
+                });
+            }
+
+            function addItemToCart(item, clickedElement) {
+                // أنيميشن العنصر
+                const itemRect = clickedElement.getBoundingClientRect();
+                const cartRect = document.getElementById('shopping-cart').getBoundingClientRect();
+
+                const animatedDiv = document.createElement('div');
+                animatedDiv.className = 'animated-item';
+                animatedDiv.textContent = item.icon; // أو أيقونة صغيرة
+                document.body.appendChild(animatedDiv);
+
+                animatedDiv.style.left = `${itemRect.left}px`;
+                animatedDiv.style.top = `${itemRect.top}px`;
+
+                // تشغيل الأنيميشن بعد قليل للسماح للمتصفح برسم العنصر في مكانه الأصلي
+                setTimeout(() => {
+                    animatedDiv.style.transform = `translate(${cartRect.left - itemRect.left + 20}px, ${cartRect.top - itemRect.top + 20}px) scale(0.5)`;
+                    animatedDiv.style.opacity = '0';
+                }, 10);
+
+                // إضافة العنصر إلى السلة بعد انتهاء الأنيميشن
+                setTimeout(() => {
+                    cartItems.push(item);
+                    updateCartDisplay();
+                    animatedDiv.remove(); // حذف العنصر المتحرك
+                }, 800); // نفس مدة الانتقال
+            }
+
+            function removeItemFromCart(index) {
+                cartItems.splice(index, 1);
+                updateCartDisplay();
+            }
+
+            copyCartNamesBtn.addEventListener('click', () => {
+                const itemNames = cartItems.map(item => item.name).join('\n');
+                if (itemNames) {
+                    // استخدام document.execCommand('copy') لأنه يعمل بشكل موثوق داخل iframes
+                    const textarea = document.createElement('textarea');
+                    textarea.value = itemNames;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        alert('تم نسخ أسماء المشتريات إلى الحافظة!'); // يمكن استبدالها برسالة أفضل
+                    } catch (err) {
+                        console.error('فشل النسخ:', err);
+                        alert('فشل نسخ الأسماء.');
+                    }
+                    document.body.removeChild(textarea);
+                } else {
+                    alert('السلة فارغة لنسخ الأسماء.');
+                }
+            });
 
             // دالة لإظهار بطاقات الأقسام وإخفاء العرض التفصيلي
             function showCategoryCards() {
@@ -388,6 +613,7 @@
                 mainTitle.textContent = 'أقسام اللعبة';
                 searchInput.classList.add('hidden'); // إخفاء شريط البحث
                 searchInput.value = ''; // تفريغ شريط البحث
+                shoppingCart.classList.add('hidden'); // إخفاء السلة
             }
 
             // دالة لملء المحتوى الديناميكي للأقسام
@@ -412,7 +638,7 @@
                             <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${budget.name}</h4>
                             <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>الخزينة:</strong> ${budget.treasury}</p>
                             <p class="text-gray-300 text-sm sm:text-base"><strong>الناتج المحلي:</strong> +${budget.output}</p>
-                            <canvas class="budget-chart-canvas" data-budget-history='${JSON.stringify(budget.history)}'></canvas>
+                            <canvas class="budget-chart-canvas"></canvas>
                         `;
                         budgetsContent.appendChild(budgetItemDiv);
 
@@ -423,21 +649,28 @@
                         canvas.height = canvas.offsetHeight;
                         drawBudgetChart(canvas, budget.history);
                     });
-                } else if (sectionId === 'buildings-section') {
-                    buildingsContent.innerHTML = ''; // تفريغ المحتوى القديم
-                    gameData.buildings.forEach(building => {
-                        buildingsContent.innerHTML += `
-                            <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 building-item">
-                                <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${building.icon} ${building.name}</h4>
-                                ${building.description ? `<p class="text-gray-300 mb-1 text-sm sm:text-base">(${building.description})</p>` : ''}
-                                <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>التكلفة:</strong> ${building.cost}</p>
-                                <p class="text-gray-300 text-sm sm:text-base"><strong>العائد:</strong> ${building.yield}</p>
-                            </div>
+                } else if (sectionId === 'items-section') { // تم التغيير من buildings-section إلى items-section
+                    itemsContent.innerHTML = ''; // تفريغ المحتوى القديم
+                    gameData.items.forEach(item => { // استخدام gameData.items
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 item-card cursor-pointer'; // إضافة cursor-pointer و item-card
+                        itemDiv.innerHTML = `
+                            <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${item.icon} ${item.name}</h4>
+                            ${item.description ? `<p class="text-gray-300 mb-1 text-sm sm:text-base">(${item.description})</p>` : ''}
+                            <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>التكلفة:</strong> ${item.cost}</p>
+                            <p class="text-gray-300 text-sm sm:text-base"><strong>العائد:</strong> ${item.yield}</p>
                         `;
+                        // إضافة مستمع الحدث للنقر على البطاقة
+                        itemDiv.addEventListener('click', () => {
+                            addItemToCart(item, itemDiv);
+                        });
+                        itemsContent.appendChild(itemDiv);
                     });
+                    shoppingCart.classList.remove('hidden'); // إظهار السلة في قسم البيانات
                 } else if (sectionId === 'rules-section') {
                     rulesContent.innerHTML = ''; // تفريغ المحتوى القديم
                     gameData.rules.forEach(ruleCategory => {
+                        // تعديل هنا: إنشاء بطاقة لكل مجموعة قواعد
                         rulesContent.innerHTML += `
                             <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 rule-item">
                                 <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${ruleCategory.title}</h4>
@@ -449,7 +682,7 @@
                     // عرض محتوى قسم المعلومات
                     document.getElementById('info-map-url').textContent = gameData.map.imageUrl;
                     document.getElementById('info-budgets-data').textContent = JSON.stringify(gameData.budgets, null, 2);
-                    document.getElementById('info-buildings-data').textContent = JSON.stringify(gameData.buildings, null, 2);
+                    document.getElementById('info-buildings-data').textContent = JSON.stringify(gameData.items, null, 2); // استخدام gameData.items
                     document.getElementById('info-rules-data').textContent = JSON.stringify(gameData.rules, null, 2);
                 }
             }
@@ -469,18 +702,24 @@
                 }
                 searchInput.value = ''; // تفريغ شريط البحث عند تغيير القسم
 
+                // إخفاء السلة بشكل افتراضي، ثم إظهارها فقط في قسم البيانات
+                shoppingCart.classList.add('hidden'); // إخفاء السلة في كل مرة يتم فيها تبديل القسم
+
                 // تغيير عنوان الصفحة حسب القسم الذي تم اختياره
                 if (sectionId === 'map-section') {
                     mainTitle.textContent = 'تفاصيل الخريطة';
                 } else if (sectionId === 'budgets-section') {
                     mainTitle.textContent = 'إدارة الميزانيات';
                     searchInput.dataset.targetClass = 'budget-item';
-                } else if (sectionId === 'buildings-section') {
-                    mainTitle.textContent = 'دليل البنايات';
-                    searchInput.dataset.targetClass = 'building-item';
+                } else if (sectionId === 'items-section') { // تم التغيير
+                    mainTitle.textContent = 'البنايات والمشتريات'; // تم التغيير
+                    searchInput.dataset.targetClass = 'item-card'; // تم التغيير
+                    searchInput.classList.remove('hidden'); // إظهار شريط البحث في قسم البنايات
+                    shoppingCart.classList.remove('hidden'); // إظهار السلة في قسم البيانات
                 } else if (sectionId === 'rules-section') {
                     mainTitle.textContent = 'قواعد اللعبة';
                     searchInput.dataset.targetClass = 'rule-item';
+                    searchInput.classList.remove('hidden'); // إظهار شريط البحث في قسم القواعد
                 } else if (sectionId === 'info-section') {
                     mainTitle.textContent = 'معلومات اللعبة الأساسية';
                 }
@@ -538,8 +777,8 @@
 
             // الحالة الأولية عند تحميل الصفحة: إظهار بطاقات الأقسام
             showCategoryCards();
+            updateCartDisplay(); // تحديث عرض السلة عند تحميل الصفحة لأول مرة
         });
     </script>
 </body>
 </html>
-�
