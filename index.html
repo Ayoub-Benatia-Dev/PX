@@ -1,463 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PX | بيانات وإحصائيات اللعبة</title>
-    <!-- جلب Tailwind CSS باش الموقع يبان شباب و متناسق -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- جلب خط Inter باش الكتابة تكون واضحة و مقروءة -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* تعريف الخط الرئيسي للموقع */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* لون خلفية داكن جداً */
-            color: #e2e8f0; /* لون نص فاتح */
-            /* خلفية بنمط خفيف لإحساس اللعبة */
-            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%232d3748" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0 0v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM12 34v-4h-2v4H6v2h4v4h2v-4h4v-2h-4zm0 0v-4h-2v4H6v2h4v4h2v-4h4v-2h-4zM36 10v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0 0v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM12 10v-4h-2v4H6v2h4v4h2v-4h4v-2h-4zm0 0v-4h-2v4H6v2h4v4h2v-4h4v-2h-4z"%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-            background-repeat: repeat;
-        }
-        /* تعديلات على ألوان Tailwind الافتراضية لتبدو أكثر احترافية */
-        .bg-blue-600 { background-color: #1f2937; } /* أزرق داكن جداً للهيدر */
-        .text-blue-600 { color: #60a5fa; } /* أزرق فاتح للنصوص */
-        .bg-blue-100 { background-color: #1f2937; } /* أزرق غامق للبطاقات */
-        .text-blue-800 { color: #93c5fd; } /* أزرق فاتح للبطاقات */
-
-        .bg-green-100 { background-color: #1f2937; } /* أخضر غامق للبطاقات */
-        .text-green-800 { color: #86efac; } /* أخضر فاتح للبطاقات */
-
-        .bg-purple-100 { background-color: #1f2937; } /* بنفسجي غامق للبطاقات */
-        .text-purple-800 { color: #a78bfa; } /* بنفسجي فاتح للبطاقات */
-
-        .bg-red-100 { background-color: #1f2937; } /* أحمر غامق للبطاقات */
-        .text-red-800 { color: #f87171; } /* أحمر فاتح للبطاقات */
-
-        .bg-gray-800 { background-color: #1f2937; } /* رمادي غامق للخلفيات الرئيسية */
-        .bg-gray-700 { background-color: #2d3748; } /* رمادي أفتح قليلاً لمحتوى الأقسام */
-        .text-gray-700 { color: #cbd5e0; } /* رمادي فاتح للنص */
-        .bg-gray-900 { background-color: #0d1117; } /* فوتر نفس لون الخلفية */
-        .bg-gray-500 { background-color: #4a5568; } /* زر الرجوع */
-        .hover\:bg-gray-700:hover { background-color: #2d3748; } /* هوفر زر الرجوع */
-
-        /* ألوان مميزة للعبة */
-        .text-game-primary { color: #facc15; } /* لون ذهبي */
-        .bg-game-primary { background-color: #facc15; }
-        .hover\:bg-game-primary-dark:hover { background-color: #eab308; }
-        .border-game-primary { border-color: #facc15; }
-
-        /* تأثيرات إضافية للبطاقات */
-        .category-card, .detailed-section > div {
-            border: 2px solid #374151; /* حدود أكثر وضوحاً */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* ظل أعمق */
-            transition: all 0.3s ease-in-out;
-        }
-        .category-card:hover {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(250, 204, 21, 0.5); /* ظل مع توهج ذهبي عند الهوفر */
-            transform: translateY(-5px) scale(1.02);
-            border-color: #facc15; /* تغيير لون الحدود عند الهوفر */
-        }
-        .btn-game {
-            background-image: linear-gradient(to bottom right, #facc15, #eab308); /* تدرج ذهبي */
-            color: #1f2937; /* نص داكن */
-            font-weight: bold;
-            padding: 0.75rem 2rem;
-            border-radius: 9999px; /* شكل دائري */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            border: 1px solid #d97706; /* حدود أغمق */
-        }
-        .btn-game:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
-        }
-        .section-title {
-            text-shadow: 0px 0px 8px rgba(250, 204, 21, 0.6); /* توهج للنص */
-        }
-
-        /* ستايل خاص بالخريطة */
-        #map-image-display-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px; /* تحديد أقصى عرض للحاوية */
-            height: auto; /* تم التغيير لعرض الصورة بحجمها الأصلي */
-            max-height: 450px; /* حد أقصى للارتفاع مع السماح بالتمرير */
-            background-color: #1a202c;
-            border-radius: 0.5rem;
-            overflow: auto; /* تم التغيير للسماح بالتمرير */
-            margin: 0 auto; /* توسيط الحاوية */
-            box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); /* ظل ذهبي حول الخريطة */
-        }
-        #map-image-display-container img {
-            width: auto; /* تم التغيير لعرض الصورة بحجمها الأصلي */
-            height: auto; /* تم التغيير لارتفاع الصورة بحجمها الأصلي */
-            display: block; /* لمنع أي مسافة إضافية تحت الصورة */
-            cursor: pointer; /* للإشارة إلى أنها قابلة للنقر */
-        }
-        .info-item {
-            background-color: #2d3748;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #4a5568;
-        }
-        /* ألوان أيقونات الممالك */
-        .color-dot-red { background-color: #ef4444; }
-        .color-dot-black { background-color: #000000; }
-        .color-dot-blue { background-color: #3b82f6; }
-    </style>
-</head>
-<body class="bg-gray-950 text-gray-200 min-h-screen flex flex-col">
-    <!-- رأس الصفحة (الهيدر) -->
-    <header class="bg-gray-800 text-white p-4 shadow-2xl rounded-b-lg border-b-4 border-game-primary">
-        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center text-center sm:text-left">
-            <h1 class="text-3xl sm:text-4xl font-black text-game-primary rounded-md p-2 mb-2 sm:mb-0">PX</h1>
-            <nav class="w-full sm:w-auto mt-2 sm:mt-0">
-                <ul class="flex justify-center sm:justify-end space-x-4 sm:space-x-6">
-                    <li><a href="#" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold">الرئيسية</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold">الأقسام</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold" data-section-id="info-section-nav">معلومات</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <!-- قسم البطل (Hero Section) - لجعل الموقع يبدو احترافياً أكثر -->
-    <section class="bg-gray-900 text-white py-16 px-4 text-center shadow-inner border-b-2 border-game-primary">
-        <div class="container mx-auto">
-            <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 text-game-primary section-title animate-pulse">مرحباً بك في عالم PX!</h2>
-            <p class="text-lg sm:text-xl text-gray-400 mb-8">اكتشف كل أسرار اللعبة، بيانات اللاعبين، و استراتيجيات الفوز.</p>
-            <button class="btn-game">
-                ابدأ الاستكشاف
-            </button>
-        </div>
-    </section>
-
-    <!-- المحتوى الرئيسي للصفحة -->
-    <main class="container mx-auto p-4 sm:p-6 flex-grow">
-        <section class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-xl mb-8 border-2 border-gray-700">
-            <h2 id="main-title" class="text-2xl sm:text-3xl font-bold mb-6 text-center text-game-primary section-title">أقسام اللعبة</h2>
-
-            <!-- بطاقات الأقسام (تظهر في البداية) -->
-            <div id="section-category-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
-                <!-- بطاقة قسم الخريطة -->
-                <div class="category-card bg-blue-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="map-section">
-                    <img src="https://placehold.co/150x150/1f2937/facc15?text=الخريطة" alt="أيقونة الخريطة" class="w-24 h-24 mb-4 rounded-full border-2 border-game-primary p-2">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-2 text-blue-800 text-center">الخريطة</h3>
-                    <p class="text-gray-300 text-sm sm:text-base text-center">استكشف خريطة اللعبة و المناطق المهمة.</p>
-                </div>
-
-                <!-- بطاقة قسم الميزانيات -->
-                <div class="category-card bg-green-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="budgets-section">
-                    <img src="https://placehold.co/150x150/1f2937/86efac?text=الميزانيات" alt="أيقونة الميزانيات" class="w-24 h-24 mb-4 rounded-full border-2 border-green-800 p-2">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-2 text-green-800 text-center">الميزانيات</h3>
-                    <p class="text-gray-300 text-sm sm:text-base text-center">تعرف على كيفية إدارة الميزانية و الموارد.</p>
-                </div>
-
-                <!-- بطاقة قسم البنايات -->
-                <div class="category-card bg-purple-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="buildings-section">
-                    <img src="https://placehold.co/150x150/1f2937/a78bfa?text=البنايات" alt="أيقونة البنايات" class="w-24 h-24 mb-4 rounded-full border-2 border-purple-800 p-2">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-2 text-purple-800 text-center">البنايات</h3>
-                    <p class="text-gray-300 text-sm sm:text-base text-center">دليل شامل للبنايات و وظائفها.</p>
-                </div>
-
-                <!-- بطاقة قسم القواعد -->
-                <div class="category-card bg-red-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="rules-section">
-                    <img src="https://placehold.co/150x150/1f2937/f87171?text=القواعد" alt="أيقونة القواعد" class="w-24 h-24 mb-4 rounded-full border-2 border-red-800 p-2">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-2 text-red-800 text-center">القواعد</h3>
-                    <p class="text-gray-300 text-sm sm:text-base text-center">كل ما تحتاج معرفته عن قواعد اللعبة.</p>
-                </div>
-            </div>
-
-            <!-- حاوية الأقسام التفصيلية (مخفية في البداية) -->
-            <div id="detailed-player-list-container" class="hidden">
-                <!-- زر الرجوع و شريط البحث -->
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                    <button id="back-to-categories-btn" class="btn-game w-full sm:w-auto">
-                        رجوع للأقسام
-                    </button>
-                    <input type="text" id="search-input" placeholder="ابحث في هذا القسم..." class="bg-gray-700 text-gray-200 border border-gray-600 rounded-md p-2 w-full sm:w-1/2 focus:outline-none focus:border-game-primary transition duration-300">
-                </div>
-
-                <!-- قسم معلومات اللعبة بالتفصيل (يحتوي على البيانات المركزية) -->
-                <div id="info-section" class="detailed-section hidden grid grid-cols-1 gap-4 sm:gap-6">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">معلومات اللعبة الأساسية</h3>
-                    <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600">
-                        <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">رابط صورة الخريطة:</h4>
-                        <p id="info-map-url" class="text-gray-300 text-sm sm:text-base break-all"></p>
-                    </div>
-                    <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600">
-                        <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">بيانات الميزانيات:</h4>
-                        <pre id="info-budgets-data" class="text-gray-300 text-sm sm:text-base overflow-auto max-h-48"></pre>
-                    </div>
-                    <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600">
-                        <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">بيانات البنايات:</h4>
-                        <pre id="info-buildings-data" class="text-gray-300 text-sm sm:text-base overflow-auto max-h-48"></pre>
-                    </div>
-                    <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600">
-                        <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">بيانات القواعد:</h4>
-                        <pre id="info-rules-data" class="text-gray-300 text-sm sm:text-base overflow-auto max-h-48"></pre>
-                    </div>
-                </div>
-
-                <!-- قسم الخريطة بالتفصيل (الجديد) -->
-                <div id="map-section" class="detailed-section hidden grid grid-cols-1 gap-4 sm:gap-6">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">تفاصيل الخريطة</h3>
-                    <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md text-center border-2 border-gray-600">
-                        <div id="map-image-display-container" class="relative w-full h-auto max-h-[450px] bg-gray-900 rounded-md mb-4 overflow-auto">
-                            <!-- الصورة ستُعرض هنا و عند الضغط عليها تفتح في تبويبة جديدة -->
-                            <a id="map-link" href="#" target="_blank" class="block w-full h-full">
-                                <img id="map-image" src="" alt="خريطة اللعبة" class="block w-auto h-auto mx-auto my-auto">
-                            </a>
-                        </div>
-                        <p class="text-gray-300 text-sm sm:text-base mt-4">اضغط على الخريطة لفتحها في تبويبة جديدة.</p>
-                        
-                        <!-- معلومات الخريطة -->
-                        <div class="mt-6 text-right" id="map-legends-container">
-                            <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">الخريطة الحالية:</h4>
-                            <!-- Legends will be dynamically loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- قسم الميزانيات بالتفصيل -->
-                <div id="budgets-section" class="detailed-section hidden grid grid-cols-1 gap-4 sm:gap-6">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">إدارة الميزانيات</h3>
-                    <div id="budgets-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        <!-- Budget items will be dynamically loaded here -->
-                    </div>
-                </div>
-
-                <!-- قسم البنايات بالتفصيل -->
-                <div id="buildings-section" class="detailed-section hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">دليل البنايات</h3>
-                    <div id="buildings-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        <!-- Building items will be dynamically loaded here -->
-                    </div>
-                </div>
-
-                <!-- قسم القواعد بالتفصيل -->
-                <div id="rules-section" class="detailed-section hidden grid grid-cols-1 gap-4 sm:gap-6">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">قواعد اللعبة</h3>
-                    <div id="rules-content" class="grid grid-cols-1 gap-4 sm:gap-6">
-                        <!-- Rule items will be dynamically loaded here -->
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- ذيل الصفحة (الفوتر) -->
-    <footer class="bg-gray-900 text-gray-400 p-4 text-center rounded-t-lg mt-8 border-t-4 border-game-primary">
-        <p class="text-sm">&copy; 2025 PX. كل الحقوق محفوظة.</p>
-        <p class="text-xs mt-1">مصمم خصيصاً للمحترفين!</p>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // جلب العناصر الأساسية من الصفحة
-            const categoryCardsContainer = document.getElementById('section-category-cards');
-            const detailedPlayerListContainer = document.getElementById('detailed-player-list-container');
-            const backButton = document.getElementById('back-to-categories-btn');
-            const detailedSections = document.querySelectorAll('.detailed-section');
-            const mainTitle = document.getElementById('main-title');
-            const searchInput = document.getElementById('search-input');
-
-            // عناصر الخريطة الجديدة
-            const mapImage = document.getElementById('map-image');
-            const mapLink = document.getElementById('map-link'); // الرابط الجديد للصورة
-            const mapLegendsContainer = document.getElementById('map-legends-container');
-
-            // حاويات المحتوى الديناميكي
-            const budgetsContent = document.getElementById('budgets-content');
-            const buildingsContent = document.getElementById('buildings-content');
-            const rulesContent = document.getElementById('rules-content');
-
-            // بيانات اللعبة المركزية
-            const gameData = {
-                map: {
-                    imageUrl: "https://placehold.co/1200x800/1f2937/facc15?text=خريطة+PX+الاحترافية", // رابط صورة الخريطة (كبرت الحجم هنا للمثال)
-                    legends: [
-                        { color: "red-600", name: "مملكة مودستان" },
-                        { color: "black", name: "امبراطورية سلطنستان" },
-                        { color: "blue-600", name: "المملكة الدورية" }
-                    ]
-                },
-                budgets: [
-                    { name: "لمملكة الدورية", treasury: 185, output: 45 },
-                    { name: "امبراطورية سلطنستان", treasury: 185, output: 45 },
-                    { name: "مملكة مودستان", treasury: 185, output: 45 }
-                ],
-                buildings: [
-                    { icon: "⭐️", name: "مركز للدولة", description: "(ينصح للدول الكبيرة)", cost: "25.000", yield: "تثبيت الدولة" },
-                    { icon: "🛖", name: "قرية", description: "(إجباري)", cost: "200", yield: "قوة عاملة 50، ميزانية 25" },
-                    { icon: "🏰", name: "قلعة", description: "(تطوير 2× للقرية)", cost: "1000", yield: "قوة عاملة 250، ميزانية 125" },
-                    { icon: "🏛", name: "بنك", description: "(إجباري للحفاظ على الميزانية)", cost: "250", yield: "الحفاظ على الخزينة من الضياع، ميزانية 20" },
-                    { icon: "🎪", name: "مهرجان", description: "(لإضعاف الثورة)", cost: "300", yield: "ثبات الرأي العام" },
-                    { icon: "⚒️", name: "مصنع", description: "", cost: "350", yield: "الميزانية 75" },
-                    { icon: "⛏️", name: "منجم", description: "", cost: "350", yield: "الميزانية 80" },
-                    { icon: "🪖", name: "معسكر", description: "", cost: "300", yield: "ترتيب 5 كتائب" },
-                    { icon: "🛡", name: "الشرطة", description: "", cost: "150", yield: "الحفاظ على أمن الدولة" },
-                    { icon: "⚫️", name: "الجيش", description: "", cost: "200", yield: "ترتيب 1 كتيبة" }
-                ],
-                rules: [
-                    {
-                        title: "قواعد عامة",
-                        items: [
-                            "<strong>الأوامر خارج اللعبة:</strong> أي أمر أو كلام يكتب في قسم الدردشة أو أي قسم غير قسم اللعبة لن يحتسب للعبة.",
-                            "<strong>تمرير الزمن:</strong> في حالة موافقة اللاعبين على تمرير الزمن إلى الأمام (بأيام متفق عليها) سيتم تمريرها."
-                        ]
-                    },
-                    {
-                        title: "قواعد الموارد و الحركة",
-                        items: [
-                            "<strong>احتياجات الشعب:</strong> الشعب يحتاج لخشب ومياه.",
-                            "<strong>غلق الأنهار:</strong> يمكن غلق الأنهار.",
-                            "<strong>تحريك الجيوش:</strong> يمكن تحريك الجيوش لأي مكان."
-                        ]
-                    }
-                ]
-            };
-
-            // دالة لإظهار بطاقات الأقسام وإخفاء العرض التفصيلي
-            function showCategoryCards() {
-                categoryCardsContainer.classList.remove('hidden');
-                detailedPlayerListContainer.classList.add('hidden');
-                detailedSections.forEach(section => section.classList.add('hidden'));
-                mainTitle.textContent = 'أقسام اللعبة';
-                searchInput.classList.add('hidden'); // إخفاء شريط البحث
-                searchInput.value = ''; // تفريغ شريط البحث
-            }
-
-            // دالة لملء المحتوى الديناميكي للأقسام
-            function populateSectionContent(sectionId) {
-                if (sectionId === 'map-section') {
-                    mapImage.src = gameData.map.imageUrl; // تعيين مصدر الصورة
-                    mapLink.href = gameData.map.imageUrl; // تعيين رابط الصورة للفتح في تبويبة جديدة
-                    mapLegendsContainer.innerHTML = `<h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">الخريطة الحالية:</h4>`;
-                    gameData.map.legends.forEach(legend => {
-                        mapLegendsContainer.innerHTML += `
-                            <div class="flex items-center justify-end mb-2 p-2 bg-gray-900 rounded-md shadow-inner border border-gray-700">
-                                <span class="text-lg sm:text-xl font-bold text-gray-200">${legend.name}</span>
-                                <span class="inline-block w-5 h-5 rounded-full bg-${legend.color} ml-3 shadow-lg border border-gray-600"></span>
-                            </div>
-                        `;
-                    });
-                } else if (sectionId === 'budgets-section') {
-                    budgetsContent.innerHTML = ''; // تفريغ المحتوى القديم
-                    gameData.budgets.forEach(budget => {
-                        budgetsContent.innerHTML += `
-                            <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 budget-item">
-                                <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${budget.name}</h4>
-                                <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>الخزينة:</strong> ${budget.treasury}</p>
-                                <p class="text-gray-300 text-sm sm:text-base"><strong>الناتج المحلي:</strong> +${budget.output}</p>
-                            </div>
-                        `;
-                    });
-                } else if (sectionId === 'buildings-section') {
-                    buildingsContent.innerHTML = ''; // تفريغ المحتوى القديم
-                    gameData.buildings.forEach(building => {
-                        buildingsContent.innerHTML += `
-                            <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 building-item">
-                                <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${building.icon} ${building.name}</h4>
-                                ${building.description ? `<p class="text-gray-300 mb-1 text-sm sm:text-base">(${building.description})</p>` : ''}
-                                <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>التكلفة:</strong> ${building.cost}</p>
-                                <p class="text-gray-300 text-sm sm:text-base"><strong>العائد:</strong> ${building.yield}</p>
-                            </div>
-                        `;
-                    });
-                } else if (sectionId === 'rules-section') {
-                    rulesContent.innerHTML = ''; // تفريغ المحتوى القديم
-                    gameData.rules.forEach(ruleCategory => {
-                        rulesContent.innerHTML += `
-                            <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 rule-item">
-                                <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${ruleCategory.title}</h4>
-                                ${ruleCategory.items.map(item => `<p class="text-gray-300 mb-1 text-sm sm:text-base">${item}</p>`).join('')}
-                            </div>
-                        `;
-                    });
-                } else if (sectionId === 'info-section') {
-                    // عرض محتوى قسم المعلومات
-                    document.getElementById('info-map-url').textContent = gameData.map.imageUrl;
-                    document.getElementById('info-budgets-data').textContent = JSON.stringify(gameData.budgets, null, 2);
-                    document.getElementById('info-buildings-data').textContent = JSON.stringify(gameData.buildings, null, 2);
-                    document.getElementById('info-rules-data').textContent = JSON.stringify(gameData.rules, null, 2);
-                }
-            }
-
-            // دالة لإظهار قسم تفصيلي معين وإخفاء بطاقات الأقسام
-            function showDetailedSection(sectionId) {
-                categoryCardsContainer.classList.add('hidden');
-                detailedPlayerListContainer.classList.remove('hidden');
-                detailedSections.forEach(section => section.classList.add('hidden'));
-                document.getElementById(sectionId).classList.remove('hidden');
-                
-                // إظهار شريط البحث فقط للأقسام التي تحتاج بحث
-                if (sectionId === 'map-section' || sectionId === 'info-section') {
-                    searchInput.classList.add('hidden');
-                } else {
-                    searchInput.classList.remove('hidden');
-                }
-                searchInput.value = ''; // تفريغ شريط البحث عند تغيير القسم
-
-                // تغيير عنوان الصفحة حسب القسم الذي تم اختياره
-                if (sectionId === 'map-section') {
-                    mainTitle.textContent = 'تفاصيل الخريطة';
-                } else if (sectionId === 'budgets-section') {
-                    mainTitle.textContent = 'إدارة الميزانيات';
-                    searchInput.dataset.targetClass = 'budget-item';
-                } else if (sectionId === 'buildings-section') {
-                    mainTitle.textContent = 'دليل البنايات';
-                    searchInput.dataset.targetClass = 'building-item';
-                } else if (sectionId === 'rules-section') {
-                    mainTitle.textContent = 'قواعد اللعبة';
-                    searchInput.dataset.targetClass = 'rule-item';
-                } else if (sectionId === 'info-section') {
-                    mainTitle.textContent = 'معلومات اللعبة الأساسية';
-                }
-
-                // ملء المحتوى الديناميكي للقسم المختار
-                populateSectionContent(sectionId);
-            }
-
-            // إضافة مستمعي الأحداث (click listeners) لبطاقات الأقسام
-            categoryCardsContainer.querySelectorAll('.category-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const sectionId = card.dataset.sectionId;
-                    showDetailedSection(sectionId);
-                });
-            });
-
-            // إضافة مستمع لزر "معلومات" في النافبار
-            document.querySelector('[data-section-id="info-section-nav"]').addEventListener('click', (e) => {
-                e.preventDefault();
-                showDetailedSection('info-section');
-            });
-
-
-            // إضافة مستمع حدث (click listener) لزر الرجوع
-            backButton.addEventListener('click', showCategoryCards);
-
-            // وظيفة البحث
-            searchInput.addEventListener('keyup', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const activeSection = document.querySelector('.detailed-section:not(.hidden)');
-                if (!activeSection) return;
-
-                const items = activeSection.querySelectorAll(`.${searchInput.dataset.targetClass}`);
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        item.classList.remove('hidden');
-                    } else {
-                        item.classList.add('hidden');
-                    }
-                });
-            });
-
-            // الحالة الأولية عند تحميل الصفحة: إظهار بطاقات الأقسام
-            showCategoryCards();
-        });
-    </script>
-</body>
-</html>
