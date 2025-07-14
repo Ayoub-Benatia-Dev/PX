@@ -122,17 +122,6 @@
         </div>
     </header>
 
-    <!-- قسم البطل (Hero Section) - لجعل الموقع يبدو احترافياً أكثر -->
-    <section class="bg-gray-900 text-white py-16 px-4 text-center shadow-inner border-b-2 border-game-primary">
-        <div class="container mx-auto">
-            <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 text-game-primary section-title animate-pulse">مرحباً بك في عالم PX!</h2>
-            <p class="text-lg sm:text-xl text-gray-400 mb-8">اكتشف كل أسرار اللعبة، بيانات اللاعبين، و استراتيجيات الفوز.</p>
-            <button class="btn-game">
-                ابدأ الاستكشاف
-            </button>
-        </div>
-    </section>
-
     <!-- المحتوى الرئيسي للصفحة -->
     <main class="container mx-auto p-4 sm:p-6 flex-grow">
         <section class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-xl mb-8 border-2 border-gray-700">
@@ -271,16 +260,16 @@
             // حاويات المحتوى الديناميكي
             const budgetsContent = document.getElementById('budgets-content');
             const buildingsContent = document.getElementById('buildings-content');
-            const rulesContent = document.getElementById('rules-content');
+            const rulesContent = document = document.getElementById('rules-content');
 
             // بيانات اللعبة المركزية
             const gameData = {
                 map: {
                     imageUrl: "https://placehold.co/1200x800/1f2937/facc15?text=خريطة+PX+الاحترافية", // رابط صورة الخريطة (كبرت الحجم هنا للمثال)
                     legends: [
-                        { color: "red-600", name: "مملكة مودستان" },
-                        { color: "black", name: "امبراطورية سلطنستان" },
-                        { color: "blue-600", name: "المملكة الدورية" }
+                        { color: "red-600", name: "مملكة مودستان", icon: "🔴" },
+                        { color: "black", name: "امبراطورية سلطنستان", icon: "⚫️" },
+                        { color: "blue-600", name: "المملكة الدورية", icon: "🔵" }
                     ]
                 },
                 budgets: [
@@ -338,8 +327,7 @@
                     gameData.map.legends.forEach(legend => {
                         mapLegendsContainer.innerHTML += `
                             <div class="flex items-center justify-end mb-2 p-2 bg-gray-900 rounded-md shadow-inner border border-gray-700">
-                                <span class="text-lg sm:text-xl font-bold text-gray-200">${legend.name}</span>
-                                <span class="inline-block w-5 h-5 rounded-full bg-${legend.color} ml-3 shadow-lg border border-gray-600"></span>
+                                <span class="text-lg sm:text-xl font-bold text-gray-200">${legend.icon} ${legend.name}</span>
                             </div>
                         `;
                     });
