@@ -113,6 +113,14 @@
             margin-bottom: 1rem;
             text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3); /* ظل خفيف للإيموجي */
         }
+        /* ستايل الكانفاس للرسم البياني */
+        .budget-chart-canvas {
+            width: 100%;
+            height: 100px; /* ارتفاع ثابت للرسم البياني */
+            background-color: #1a202c;
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body class="bg-gray-950 text-gray-200 min-h-screen flex flex-col">
@@ -122,8 +130,8 @@
             <h1 class="text-3xl sm:text-4xl font-black text-game-primary rounded-md p-2 mb-2 sm:mb-0">PX</h1>
             <nav class="w-full sm:w-auto mt-2 sm:mt-0">
                 <ul class="flex justify-center sm:justify-end space-x-4 sm:space-x-6">
-                    <li><a href="#" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold">الرئيسية</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold">الأقسام</a></li>
+                    <li><a href="#" id="home-nav-link" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold">الرئيسية</a></li>
+                    <li><a href="#" id="sections-nav-link" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold">الأقسام</a></li>
                     <li><a href="#" class="text-gray-300 hover:text-game-primary transition duration-300 rounded-md p-2 text-base sm:text-lg font-semibold" data-section-id="info-section-nav">معلومات</a></li>
                 </ul>
             </nav>
@@ -197,7 +205,7 @@
                     </div>
                 </div>
 
-                <!-- قسم الخريطة بالتفصيل (الجديد) -->
+                <!-- قسم الخريطة بالتفصيل -->
                 <div id="map-section" class="detailed-section hidden grid grid-cols-1 gap-4 sm:gap-6">
                     <h3 class="text-xl sm:text-2xl font-bold mb-4 col-span-full text-game-primary section-title">تفاصيل الخريطة</h3>
                     <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md text-center border-2 border-gray-600">
@@ -273,7 +281,7 @@
             // بيانات اللعبة المركزية
             const gameData = {
                 map: {
-                    imageUrl: "https://ayoub-benatia-dev.github.io/PX/map.png
+                    imageUrl: "https://ayoub-benatia-dev.github.io/PX/map.png", // رابط صورة الخريطة
                     legends: [
                         { color: "red-600", name: "مملكة مودستان", icon: "🔴" },
                         { color: "black", name: "امبراطورية سلطنستان", icon: "⚫️" },
@@ -281,14 +289,14 @@
                     ]
                 },
                 budgets: [
-                    { name: "لمملكة الدورية", treasury: 185, output: 45 },
-                    { name: "امبراطورية سلطنستان", treasury: 185, output: 45 },
-                    { name: "مملكة مودستان", treasury: 185, output: 45 }
+                    { name: "لمملكة الدورية", treasury: 185, output: 45, history: [100, 120, 150, 185] },
+                    { name: "امبراطورية سلطنستان", treasury: 185, output: 45, history: [90, 110, 140, 185] },
+                    { name: "مملكة مودستان", treasury: 185, output: 45, history: [110, 130, 160, 185] }
                 ],
                 buildings: [
                     { icon: "⭐️", name: "مركز للدولة", description: "(ينصح للدول الكبيرة)", cost: "25.000", yield: "تثبيت الدولة" },
                     { icon: "🛖", name: "قرية", description: "(إجباري)", cost: "200", yield: "قوة عاملة 50، ميزانية 25" },
-                    { icon: "🏰", name: "قلعة", description: "(تطوير 2× للقرية)", cost: "1000", yield: "قوة عاملة 250، ميزانية 125" },
+                    { icon: "�", name: "قلعة", description: "(تطوير 2× للقرية)", cost: "1000", yield: "قوة عاملة 250، ميزانية 125" },
                     { icon: "🏛", name: "بنك", description: "(إجباري للحفاظ على الميزانية)", cost: "250", yield: "الحفاظ على الخزينة من الضياع، ميزانية 20" },
                     { icon: "🎪", name: "مهرجان", description: "(لإضعاف الثورة)", cost: "300", yield: "ثبات الرأي العام" },
                     { icon: "⚒️", name: "مصنع", description: "", cost: "350", yield: "الميزانية 75" },
@@ -316,6 +324,62 @@
                 ]
             };
 
+            // دالة لرسم الرسم البياني (المنحنى) للميزانية
+            function drawBudgetChart(canvasElement, historyData) {
+                const ctx = canvasElement.getContext('2d');
+                const width = canvasElement.width;
+                const height = canvasElement.height;
+                ctx.clearRect(0, 0, width, height); // مسح الكانفاس
+
+                if (historyData.length < 2) {
+                    // إذا لم يكن هناك ما يكفي من البيانات لرسم خط
+                    ctx.fillStyle = '#cbd5e0';
+                    ctx.font = '12px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('لا توجد بيانات كافية للرسم', width / 2, height / 2);
+                    return;
+                }
+
+                // تحديد القيم القصوى والدنيا للبيانات
+                const minVal = Math.min(...historyData);
+                const maxVal = Math.max(...historyData);
+                const range = maxVal - minVal;
+
+                // الهوامش
+                const padding = 10;
+                const chartWidth = width - 2 * padding;
+                const chartHeight = height - 2 * padding;
+
+                // رسم الخط
+                ctx.beginPath();
+                ctx.strokeStyle = '#facc15'; // لون الخط ذهبي
+                ctx.lineWidth = 2;
+
+                // نقل نقطة البداية
+                const startX = padding;
+                const startY = padding + chartHeight - ((historyData[0] - minVal) / range) * chartHeight;
+                ctx.moveTo(startX, startY);
+
+                // رسم النقاط المتبقية
+                for (let i = 1; i < historyData.length; i++) {
+                    const x = padding + (i / (historyData.length - 1)) * chartWidth;
+                    const y = padding + chartHeight - ((historyData[i] - minVal) / range) * chartHeight;
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+
+                // رسم النقاط على الخط
+                ctx.fillStyle = '#facc15'; // لون النقاط ذهبي
+                for (let i = 0; i < historyData.length; i++) {
+                    const x = padding + (i / (historyData.length - 1)) * chartWidth;
+                    const y = padding + chartHeight - ((historyData[i] - minVal) / range) * chartHeight;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2); // نقطة دائرية
+                    ctx.fill();
+                }
+            }
+
+
             // دالة لإظهار بطاقات الأقسام وإخفاء العرض التفصيلي
             function showCategoryCards() {
                 categoryCardsContainer.classList.remove('hidden');
@@ -342,13 +406,22 @@
                 } else if (sectionId === 'budgets-section') {
                     budgetsContent.innerHTML = ''; // تفريغ المحتوى القديم
                     gameData.budgets.forEach(budget => {
-                        budgetsContent.innerHTML += `
-                            <div class="bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 budget-item">
-                                <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${budget.name}</h4>
-                                <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>الخزينة:</strong> ${budget.treasury}</p>
-                                <p class="text-gray-300 text-sm sm:text-base"><strong>الناتج المحلي:</strong> +${budget.output}</p>
-                            </div>
+                        const budgetItemDiv = document.createElement('div');
+                        budgetItemDiv.className = 'bg-gray-700 p-4 sm:p-6 rounded-lg shadow-md border-2 border-gray-600 budget-item';
+                        budgetItemDiv.innerHTML = `
+                            <h4 class="text-lg sm:text-xl font-bold mb-2 text-game-primary">${budget.name}</h4>
+                            <p class="text-gray-300 mb-1 text-sm sm:text-base"><strong>الخزينة:</strong> ${budget.treasury}</p>
+                            <p class="text-gray-300 text-sm sm:text-base"><strong>الناتج المحلي:</strong> +${budget.output}</p>
+                            <canvas class="budget-chart-canvas" data-budget-history='${JSON.stringify(budget.history)}'></canvas>
                         `;
+                        budgetsContent.appendChild(budgetItemDiv);
+
+                        // رسم الرسم البياني بعد إضافة العنصر إلى DOM
+                        const canvas = budgetItemDiv.querySelector('.budget-chart-canvas');
+                        // نضبط أبعاد الكانفاس الحقيقية (الـ resolution)
+                        canvas.width = canvas.offsetWidth;
+                        canvas.height = canvas.offsetHeight;
+                        drawBudgetChart(canvas, budget.history);
                     });
                 } else if (sectionId === 'buildings-section') {
                     buildingsContent.innerHTML = ''; // تفريغ المحتوى القديم
@@ -430,6 +503,18 @@
                 showDetailedSection('info-section');
             });
 
+            // إضافة مستمع لزر "الرئيسية" في النافبار
+            document.getElementById('home-nav-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showCategoryCards();
+            });
+
+            // إضافة مستمع لزر "الأقسام" في النافبار
+            document.getElementById('sections-nav-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                showCategoryCards(); // نفس وظيفة الرئيسية للعودة لبطاقات الأقسام
+            });
+
 
             // إضافة مستمع حدث (click listener) لزر الرجوع
             backButton.addEventListener('click', showCategoryCards);
@@ -457,3 +542,4 @@
     </script>
 </body>
 </html>
+�
