@@ -105,6 +105,14 @@
         .color-dot-red { background-color: #ef4444; }
         .color-dot-black { background-color: #000000; }
         .color-dot-blue { background-color: #3b82f6; }
+
+        /* ستايل أيقونات الأقسام (إيموجي) */
+        .category-icon {
+            font-size: 6rem; /* حجم كبير للإيموجي */
+            line-height: 1; /* لضبط المسافة بين السطور */
+            margin-bottom: 1rem;
+            text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3); /* ظل خفيف للإيموجي */
+        }
     </style>
 </head>
 <body class="bg-gray-950 text-gray-200 min-h-screen flex flex-col">
@@ -131,28 +139,28 @@
             <div id="section-category-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
                 <!-- بطاقة قسم الخريطة -->
                 <div class="category-card bg-blue-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="map-section">
-                    <img src="https://placehold.co/150x150/1f2937/facc15?text=الخريطة" alt="أيقونة الخريطة" class="w-24 h-24 mb-4 rounded-full border-2 border-game-primary p-2">
+                    <span class="category-icon">🗺️</span>
                     <h3 class="text-xl sm:text-2xl font-bold mb-2 text-blue-800 text-center">الخريطة</h3>
                     <p class="text-gray-300 text-sm sm:text-base text-center">استكشف خريطة اللعبة و المناطق المهمة.</p>
                 </div>
 
                 <!-- بطاقة قسم الميزانيات -->
                 <div class="category-card bg-green-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="budgets-section">
-                    <img src="https://placehold.co/150x150/1f2937/86efac?text=الميزانيات" alt="أيقونة الميزانيات" class="w-24 h-24 mb-4 rounded-full border-2 border-green-800 p-2">
+                    <span class="category-icon">💰</span>
                     <h3 class="text-xl sm:text-2xl font-bold mb-2 text-green-800 text-center">الميزانيات</h3>
                     <p class="text-gray-300 text-sm sm:text-base text-center">تعرف على كيفية إدارة الميزانية و الموارد.</p>
                 </div>
 
                 <!-- بطاقة قسم البنايات -->
                 <div class="category-card bg-purple-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="buildings-section">
-                    <img src="https://placehold.co/150x150/1f2937/a78bfa?text=البنايات" alt="أيقونة البنايات" class="w-24 h-24 mb-4 rounded-full border-2 border-purple-800 p-2">
+                    <span class="category-icon">🏰</span>
                     <h3 class="text-xl sm:text-2xl font-bold mb-2 text-purple-800 text-center">البنايات</h3>
                     <p class="text-gray-300 text-sm sm:text-base text-center">دليل شامل للبنايات و وظائفها.</p>
                 </div>
 
                 <!-- بطاقة قسم القواعد -->
                 <div class="category-card bg-red-100 p-4 sm:p-6 rounded-lg shadow-lg cursor-pointer flex flex-col items-center" data-section-id="rules-section">
-                    <img src="https://placehold.co/150x150/1f2937/f87171?text=القواعد" alt="أيقونة القواعد" class="w-24 h-24 mb-4 rounded-full border-2 border-red-800 p-2">
+                    <span class="category-icon">📜</span>
                     <h3 class="text-xl sm:text-2xl font-bold mb-2 text-red-800 text-center">القواعد</h3>
                     <p class="text-gray-300 text-sm sm:text-base text-center">كل ما تحتاج معرفته عن قواعد اللعبة.</p>
                 </div>
@@ -260,7 +268,7 @@
             // حاويات المحتوى الديناميكي
             const budgetsContent = document.getElementById('budgets-content');
             const buildingsContent = document.getElementById('buildings-content');
-            const rulesContent = document = document.getElementById('rules-content');
+            const rulesContent = document.getElementById('rules-content');
 
             // بيانات اللعبة المركزية
             const gameData = {
