@@ -200,6 +200,16 @@
             pointer-events: none; /* لا يتفاعل مع أحداث الفأرة */
         }
     </style>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.unregister()
+      }
+    })
+  }
+</script>
+
 </head>
 <body class="bg-gray-950 text-gray-200 min-h-screen flex flex-col">
     <!-- رأس الصفحة (الهيدر) -->
