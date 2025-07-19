@@ -1,221 +1,288 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق بثلاث صفحات</title>
-    <!-- تحميل Tailwind CSS -->
+    <title>تطبيق أيوب الخارق</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- تحميل Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* تعريف خط Inter */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .page-content {
-            display: none; /* إخفاء كل المحتوى افتراضيا */
-        }
-        .page-content.active {
-            display: flex; /* إظهار المحتوى النشط */
-        }
-        /* Custom styles for masonry-like grid */
-        .masonry-grid {
-            /* جعل الشبكة بعمودين افتراضيا لجميع الشاشات */
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* تعديل عرض العمود الأدنى ليناسب الشاشات الأصغر */
-            grid-auto-rows: minmax(100px, auto); /* الحد الأدنى لارتفاع الصف، ثم تلقائي */
-            align-items: start; /* محاذاة العناصر إلى بداية منطقة الشبكة لمنع التمدد */
-        }
-        .card-tall {
-            grid-row: span 2; /* جعل هذه البطاقة تمتد على صفين */
+        /* تعريفات الأنيميشن */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* تعديلات خاصة للشاشات الكبيرة (أكثر من 640 بكسل) */
-        @media (min-width: 640px) {
-            .masonry-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* عرض عمود أكبر للشاشات الكبيرة */
-            }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.8), 0 0 40px rgba(255, 107, 107, 0.6); }
+            100% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes rotateIn {
+            from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+            to { opacity: 1; transform: rotate(0deg) scale(1); }
+        }
+
+        /* الأنماط الأساسية */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* خلفية داكنة أنيقة */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي بسبب الأنيميشن */
+        }
+        .container {
+            width: 100%;
+            max-width: 420px; /* عرض أقصى للهاتف، أوسع قليلا */
+            background-color: #2a2a2a; /* لون أغمق قليلاً للكونتينر */
+            border-radius: 20px; /* زوايا أكثر استدارة */
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل أعمق وأكثر نعومة */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* خط رفيع حول الكونتينر */
+            animation: fadeInScale 0.8s ease-out forwards; /* أنيميشن ظهور للكونتينر */
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #2a2a2a;
+            gap: 15px; /* مسافة أكبر بين العناصر */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideInUp 0.6s ease-out forwards; /* أنيميشن ظهور للهيدر */
+        }
+        .profile-pic {
+            width: 55px; /* حجم أكبر قليلاً */
+            height: 55px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5253); /* تدرج لوني أحمر جذاب */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 600; /* خط أثقل */
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4); /* ظل خفيف */
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            animation: pulseGlow 2s infinite alternate ease-in-out; /* أنيميشن نبض وتوهج */
+            transition: transform 0.3s ease-in-out;
+        }
+        .profile-pic:hover {
+            transform: scale(1.1) rotate(5deg); /* تأثير عند المرور بالماوس */
+        }
+        .search-bar {
+            flex-grow: 1;
+            background-color: #3a3a3a; /* لون رمادي داكن للبحث */
+            height: 45px; /* ارتفاع أكبر قليلاً */
+            border-radius: 25px; /* زوايا أكثر استدارة */
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: #bbb; /* لون نص فاتح للبحث */
+            font-size: 15px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* ظل داخلي */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease-in-out;
+            position: relative; /* لتأثير الشيمر */
+            overflow: hidden; /* لتأثير الشيمر */
+        }
+        .search-bar:focus-within {
+            border-color: #3498db;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+        }
+        .search-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite linear;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .search-bar:hover::after {
+            opacity: 1;
+        }
+
+        .cards-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px; /* مسافة أكبر بين البطاقات */
+            padding: 20px;
+        }
+        .card {
+            background: linear-gradient(135deg, #2ecc71, #27ae60); /* تدرج لوني أخضر جذاب */
+            border-radius: 15px; /* زوايا أكثر استدارة */
+            height: 140px; /* ارتفاع أكبر للبطاقات */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3); /* ظل أخضر خفيف */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* تأثير عند المرور بالماوس */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: rotateIn 0.8s ease-out forwards; /* أنيميشن ظهور للبطاقات */
+            opacity: 0; /* إخفاء مبدئي */
+        }
+        /* تأخير ظهور البطاقات */
+        .cards-section .card:nth-child(1) { animation-delay: 0.2s; }
+        .cards-section .card:nth-child(2) { animation-delay: 0.4s; }
+        .cards-section .card:nth-child(3) { animation-delay: 0.6s; }
+        .cards-section .card:nth-child(4) { animation-delay: 0.8s; }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02) rotate(2deg); /* تأثير رفع وتكبير ودوران */
+            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.6); /* ظل أقوى */
+        }
+        .card-large {
+            grid-row: span 2;
+            height: auto;
+            min-height: 300px; /* لضمان امتدادها على صفين بشكل جيد */
+            background: linear-gradient(135deg, #3498db, #2980b9); /* تدرج لوني أزرق للبطاقة الكبيرة */
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3); /* ظل أزرق خفيف */
+        }
+        .card-large:hover {
+            box-shadow: 0 15px 30px rgba(52, 152, 219, 0.6); /* ظل أقوى للبطاقة الكبيرة */
+        }
+
+        .posts-section {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            background-color: #2a2a2a; /* نفس لون خلفية الكونتينر */
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .post {
+            background-color: #3a3a3a; /* لون رمادي داكن للمنشورات */
+            border-radius: 15px;
+            min-height: 160px; /* ارتفاع أدنى للمنشورات */
+            padding: 20px;
+            color: #e0e0e0; /* لون نص فاتح للمنشورات */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* ظل للمنشورات */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            animation: slideInUp 0.7s ease-out forwards; /* أنيميشن ظهور للمنشورات */
+            opacity: 0; /* إخفاء مبدئي */
+        }
+        /* تأخير ظهور المنشورات */
+        .posts-section .post:nth-child(1) { animation-delay: 1s; }
+        .posts-section .post:nth-child(2) { animation-delay: 1.2s; }
+        .posts-section .post:nth-child(3) { animation-delay: 1.4s; }
+
+        .post:hover {
+            transform: translateY(-5px); /* تأثير رفع عند المرور بالماوس */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); /* ظل أقوى */
+        }
+        .post h3 {
+            font-weight: 700; /* خط أثقل للعناوين */
+            font-size: 1.25rem; /* حجم أكبر للعناوين */
+            margin-bottom: 10px;
+            color: #f0f0f0;
+        }
+        .post p {
+            font-size: 0.95rem; /* حجم نص مناسب */
+            line-height: 1.6;
+            color: #c0c0c0;
         }
     </style>
 </head>
-<body class="bg-gray-700 flex flex-col items-center min-h-screen p-4 pb-20"> <!-- Added pb-20 for bottom padding -->
-
-    <!-- محتوى الصفحات -->
-
-    <!-- صفحة البحث (الرئيسية) -->
-    <div id="search-page" class="page-content active flex-col items-center w-full max-w-lg mb-auto">
-        <!-- الحاوية الرمادية لمربع البحث -->
-        <div class="w-full bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col items-center space-y-4">
-            <h1 class="text-white text-2xl font-bold mb-4">Rusted Warfare</h1>
-            <div class="flex w-full">
-                <!-- حقل إدخال البحث -->
-                <input
-                    type="text"
-                    placeholder="اكتب هنا للبحث..."
-                    class="flex-grow p-3 rounded-l-lg border-2 border-gray-600 bg-gray-900 text-white focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
-                >
-                <!-- زر البحث -->
-                <button
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-r-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
-                >
-                    بحث
-                </button>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="profile-pic">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <div class="search-bar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>ابحث هنا...</span>
             </div>
         </div>
-        <!-- مربع الصورة تحت الحاوية الرمادية (خارجها) بنفس العرض وارتفاع أقل -->
-        <div class="w-full mt-6 flex justify-center">
-            <img src="https://placehold.co/300x300/6a0dad/ffffff?text=صورة+هنا" alt="صورة توضيحية" class="w-full h-52 rounded-lg object-cover shadow-xl">
-        </div>
 
-        <!-- قسم "سلاح البري" تحت الصورة - الصورة مع ظل بني-أصفر موزع -->
-        <div class="w-full mt-6 flex justify-center">
-            <img src="https://f.top4top.io/m_3486qs2tg1.bmp" alt="صورة سلاح البري"
-                 class="w-full h-52 rounded-lg object-cover transition-all duration-300 hover:scale-[1.02]"
-                 style="box-shadow: 0 0px 20px 5px rgba(161, 98, 7, 0.6), 0 0px 10px 2px rgba(161, 98, 7, 0.3);">
-        </div>
-
-        <!-- قسم "سلاح الجو" تحت "سلاح البري" - الصورة مع ظل أخضر-أزرق موزع -->
-        <div class="w-full mt-6 flex justify-center">
-            <img src="https://l.top4top.io/m_34866dw0n1.bmp" alt="صورة سلاح الجو"
-                 class="w-full h-52 rounded-lg object-cover transition-all duration-300 hover:scale-[1.02]"
-                 style="box-shadow: 0 0px 20px 5px rgba(0, 150, 136, 0.6), 0 0px 10px 2px rgba(0, 150, 136, 0.3);">
-        </div>
-
-        <!-- قسم "سلاح البحر" تحت "سلاح الجو" - الصورة مع ظل أزرق موزع بالكامل -->
-        <div class="w-full mt-6 flex justify-center">
-            <img src="https://i.top4top.io/m_34865lkhb1.bmp" alt="صورة سلاح البحر"
-                 class="w-full h-52 rounded-lg object-cover shadow-xl transition-all duration-300 hover:scale-[1.02]"
-                 style="box-shadow: 0 0px 20px 5px rgba(59, 130, 246, 0.6), 0 0px 10px 2px rgba(59, 130, 246, 0.3);">
-        </div>
-
-        <!-- قسم "الدفاعات" تحت "سلاح البحر" - الصورة مع ظل أبيض موزع بالكامل -->
-        <div class="w-full mt-6 flex justify-center">
-            <img src="https://i.top4top.io/m_3486wuqb11.bmp" alt="صورة دفاعات"
-                 class="w-full h-52 rounded-lg object-cover shadow-xl transition-all duration-300 hover:scale-[1.02]"
-                 style="box-shadow: 0 0px 20px 5px rgba(255, 255, 255, 0.6), 0 0px 10px 2px rgba(255, 255, 255, 0.3);">
-        </div>
-
-        <!-- قسم "الدمار الشامل" تحت "الدفاعات" - الصورة مع ظل أحمر موزع بالكامل -->
-        <div class="w-full mt-6 flex justify-center">
-            <img src="https://a.top4top.io/p_3486634s21.png" alt="صورة دمار شامل"
-                 class="w-full h-52 rounded-lg object-cover shadow-xl transition-all duration-300 hover:scale-[1.02]"
-                 style="box-shadow: 0 0px 20px 5px rgba(255, 0, 0, 0.6), 0 0px 10px 2px rgba(255, 0, 0, 0.3);">
-        </div>
-
-    </div>
-
-    <!-- صفحة الاستكشاف -->
-    <div id="explore-page" class="page-content flex-col items-center w-full max-w-lg mb-auto">
-        <h1 class="text-white text-2xl font-bold mb-6">اكتشف صوراً جديدة!</h1>
-        <!-- تم تعديل الشبكة لتكون بعمودين افتراضيا ولتطبيق تأثير الماسونري -->
-        <div class="grid grid-cols-2 gap-6 w-full masonry-grid">
-            <!-- بطاقة صورة 1 -->
-            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
-                <img src="https://placehold.co/300x200/4a90e2/ffffff?text=طبيعة" alt="صورة طبيعة خلابة" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
-                <p class="text-xs text-gray-300 text-right w-full">مناظر طبيعية ساحرة من حول العالم.</p>
+        <!-- Cards Section -->
+        <div class="cards-section">
+            <div class="card">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h4c0 1.105.895 2 2 2h4c1.105 0 2-.895 2-2v-1l-1-1h-4.586a1 1 0 01-.707-.293l-2.707-2.707A1 1 0 009.75 17zM3 13h10a1 1 0 001-1V3a1 1 0 00-1-1H3a1 1 0 00-1 1v9a1 1 0 001 1z" />
+                </svg>
+                بطاقة الأخبار
             </div>
-
-            <!-- بطاقة صورة 2 -->
-            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
-                <img src="https://placehold.co/300x200/7ed321/ffffff?text=مدن" alt="صورة مدينة حديثة" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
-                <p class="text-xs text-gray-300 text-right w-full">أجمل المدن وناطحات السحاب.</p>
+            <div class="card card-large">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                أهم الأحداث اليوم
+                <p class="text-sm mt-2 px-4 text-center opacity-80">اكتشف آخر المستجدات والأخبار العاجلة في منطقتك وحول العالم.</p>
             </div>
-
-            <!-- بطاقة صورة 3 -->
-            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
-                <img src="https://placehold.co/300x200/f5a623/ffffff?text=فضاء" alt="صورة الفضاء الخارجي" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
-                <p class="text-xs text-gray-300 text-right w-full">استكشاف أسرار الكون والفضاء.</p>
+            <div class="card">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0l4-4m-4 4l-4-4m4 4V4" />
+                </svg>
+                معرض الصور
             </div>
-
-            <!-- بطاقة صورة 4 -->
-            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
-                <img src="https://placehold.co/300x200/9b59b6/ffffff?text=حيوانات" alt="صورة حيوانات برية" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
-                <p class="text-xs text-gray-300 text-right w-full">صور رائعة لحيوانات من مختلف البيئات.</p>
+            <div class="card">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M17 12h.01M17 15h.01M17 18h.01M12 15h.01M12 18h.01M9 18h.01M19 21H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                </svg>
+                التقويم
             </div>
+        </div>
 
-            <!-- بطاقة صورة 5 -->
-            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
-                <img src="https://placehold.co/300x200/50e3c2/ffffff?text=طعام" alt="صورة طعام شهي" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
-                <p class="text-xs text-gray-300 text-right w-full">أطباق شهية ووصفات عالمية.</p>
+        <!-- Posts Section -->
+        <div class="posts-section">
+            <div class="post">
+                <h3 class="font-bold text-lg mb-2">
+                    <span class="text-gray-500 text-sm mr-2">17 يوليو 2025</span>
+                    افتتاح مركز الشباب الجديد
+                </h3>
+                <p class="text-sm">تم اليوم افتتاح مركز الشباب الجديد في سيدي عامر، والذي يهدف إلى توفير بيئة داعمة للشباب لتطوير مهاراتهم وقدراتهم في مختلف المجالات. حضر الافتتاح العديد من الشخصيات المحلية والمسؤولين.</p>
             </div>
-
-            <!-- بطاقة صورة 6 -->
-            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
-                <img src="https://placehold.co/300x200/bd10e0/ffffff?text=فنون" alt="صورة فنون جميلة" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
-                <p class="text-xs text-gray-300 text-right w-full">أعمال فنية وإبداعات بصرية.</p>
+            <div class="post">
+                <h3 class="font-bold text-lg mb-2">
+                    <span class="text-gray-500 text-sm mr-2">16 يوليو 2025</span>
+                    ورشة عمل حول ريادة الأعمال
+                </h3>
+                <p class="text-sm">نظمت جمعية "أمل الغد" ورشة عمل مكثفة حول أساسيات ريادة الأعمال، استهدفت الشباب الطموح من المنطقة. تضمنت الورشة نصائح عملية من خبراء في المجال وكيفية بدء المشاريع الصغيرة.</p>
+            </div>
+            <div class="post">
+                <h3 class="font-bold text-lg mb-2">
+                    <span class="text-gray-500 text-sm mr-2">15 يوليو 2025</span>
+                    حملة تنظيف واسعة في المدينة
+                </h3>
+                <p class="text-sm">قام متطوعون من مختلف الأحياء بتنظيم حملة تنظيف واسعة النطاق في وسط المدينة، بهدف الحفاظ على نظافة وجمال البيئة. لاقت الحملة استحسانا كبيرا من السكان.</p>
             </div>
         </div>
     </div>
-
-    <!-- صفحة الإشعارات -->
-    <div id="notifications-page" class="page-content flex-col items-center w-full max-w-lg mb-auto">
-        <div class="w-full bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col items-center space-y-4">
-            <h1 class="text-white text-2xl font-bold mb-4">إشعاراتك</h1>
-            <div class="w-full space-y-2">
-                <div class="bg-gray-900 p-3 rounded-lg text-white flex items-center shadow-md">
-                    <span class="text-yellow-400 text-xl mr-3">&#9733;</span> <!-- Star icon -->
-                    <p class="flex-grow">لديك إشعار جديد من النظام.</p>
-                    <span class="text-gray-500 text-xs">منذ 5 دقائق</span>
-                </div>
-                <div class="bg-gray-900 p-3 rounded-lg text-white flex items-center shadow-md">
-                    <span class="text-green-400 text-xl mr-3">&#10003;</span> <!-- Checkmark icon -->
-                    <p class="flex-grow">تم تحديث ملفك الشخصي بنجاح.</p>
-                    <span class="text-gray-500 text-xs">منذ ساعة</span>
-                </div>
-                <div class="bg-gray-900 p-3 rounded-lg text-white flex items-center shadow-md">
-                    <span class="text-red-400 text-xl mr-3">&#9888;</span> <!-- Warning icon -->
-                    <p class="flex-grow">تنبيه: تم تسجيل دخول من جهاز غير معروف.</p>
-                    <span class="text-gray-500 text-xs">يوم أمس</span>
-                </div>
-            </div>
-            <p class="mt-4 text-sm text-gray-400">هنا تظهر الإشعارات الجديدة.</p>
-        </div>
-    </div>
-
-    <!-- شريط التنقل (Navigation Bar) في الأسفل -->
-    <nav class="fixed bottom-0 left-0 right-0 w-full bg-gray-900 p-3 shadow-2xl flex justify-around z-50">
-        <button id="search-btn" class="nav-btn flex flex-col items-center text-white p-2 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out">
-            <i class="fas fa-search text-xl"></i>
-        </button>
-        <button id="explore-btn" class="nav-btn flex flex-col items-center text-white p-2 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out">
-            <i class="fas fa-compass text-xl"></i>
-        </button>
-        <button id="notifications-btn" class="nav-btn flex flex-col items-center text-white p-2 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out">
-            <i class="fas fa-bell text-xl"></i>
-        </button>
-    </nav>
-
-    <script>
-        // دالة لإظهار الصفحة المطلوبة وإخفاء البقية
-        function showPage(pageId) {
-            const pages = document.querySelectorAll('.page-content');
-            pages.forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-
-            // تحديث ألوان أزرار التنقل
-            const navButtons = document.querySelectorAll('.nav-btn');
-            navButtons.forEach(btn => {
-                btn.classList.remove('text-blue-400'); // Remove active color
-                btn.classList.add('text-white'); // Add default color
-            });
-            const activeBtn = document.getElementById(pageId.replace('-page', '-btn'));
-            if (activeBtn) {
-                activeBtn.classList.remove('text-white'); // Remove default color
-                activeBtn.classList.add('text-blue-400'); // Add active color
-            }
-        }
-
-        // إضافة مستمعي الأحداث لأزرار التنقل
-        document.getElementById('search-btn').addEventListener('click', () => showPage('search-page'));
-        document.getElementById('explore-btn').addEventListener('click', () => showPage('explore-page'));
-        document.getElementById('notifications-btn').addEventListener('click', () => showPage('notifications-page'));
-
-        // إظهار صفحة البحث كصفحة افتراضية عند التحميل
-        document.addEventListener('DOMContentLoaded', () => {
-            showPage('search-page');
-        });
-    </script>
 </body>
 </html>
