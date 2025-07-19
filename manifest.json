@@ -1,7 +1,7 @@
 {
-  "name": "موقعي الخاص",
-  "short_name": "موقعي",
-  "description": "موقع أيوب الشخصي",
+  "name": "شرح ‏‏Rusted Warfare",
+  "short_name": "شرح ‏‏Rusted Warfare",
+  "description": "موقع لشرح لعبة ‏‏Rusted Warfare",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#2d3748",
