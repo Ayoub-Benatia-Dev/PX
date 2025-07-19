@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق بثلاث صفحات</title>
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تحميل Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* تعريف خط Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .page-content {
+            display: none; /* إخفاء كل المحتوى افتراضيا */
+        }
+        .page-content.active {
+            display: flex; /* إظهار المحتوى النشط */
+        }
+        /* Custom styles for masonry-like grid */
+        .masonry-grid {
+            /* جعل الشبكة بعمودين افتراضيا لجميع الشاشات */
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* تعديل عرض العمود الأدنى ليناسب الشاشات الأصغر */
+            grid-auto-rows: minmax(100px, auto); /* الحد الأدنى لارتفاع الصف، ثم تلقائي */
+            align-items: start; /* محاذاة العناصر إلى بداية منطقة الشبكة لمنع التمدد */
+        }
+        .card-tall {
+            grid-row: span 2; /* جعل هذه البطاقة تمتد على صفين */
+        }
+
+        /* تعديلات خاصة للشاشات الكبيرة (أكثر من 640 بكسل) */
+        @media (min-width: 640px) {
+            .masonry-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* عرض عمود أكبر للشاشات الكبيرة */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-700 flex flex-col items-center min-h-screen p-4 pb-20"> <!-- Added pb-20 for bottom padding -->
+
+    <!-- محتوى الصفحات -->
+
+    <!-- صفحة البحث (الرئيسية) -->
+    <div id="search-page" class="page-content active flex-col items-center w-full max-w-lg mb-auto">
+        <!-- الحاوية الرمادية لمربع البحث -->
+        <div class="w-full bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col items-center space-y-4">
+            <h1 class="text-white text-2xl font-bold mb-4">Rusted Warfare</h1>
+            <div class="flex w-full">
+                <!-- حقل إدخال البحث -->
+                <input
+                    type="text"
+                    placeholder="اكتب هنا للبحث..."
+                    class="flex-grow p-3 rounded-l-lg border-2 border-gray-600 bg-gray-900 text-white focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
+                >
+                <!-- زر البحث -->
+                <button
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-r-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+                >
+                    بحث
+                </button>
+            </div>
+        </div>
+        <!-- مربع الصورة تحت الحاوية الرمادية (خارجها) بنفس العرض وارتفاع أقل -->
+        <div class="w-full mt-6 flex justify-center">
+            <img src="https://placehold.co/300x300/6a0dad/ffffff?text=صورة+هنا" alt="صورة توضيحية" class="w-full h-52 rounded-lg object-cover shadow-xl">
+        </div>
+
+        <!-- قسم "سلاح البري" تحت الصورة - الصورة مع ظل بني-أصفر موزع -->
+        <div class="w-full mt-6 flex justify-center">
+            <img src="https://f.top4top.io/m_3486qs2tg1.bmp" alt="صورة سلاح البري"
+                 class="w-full h-52 rounded-lg object-cover transition-all duration-300 hover:scale-[1.02]"
+                 style="box-shadow: 0 0px 20px 5px rgba(161, 98, 7, 0.6), 0 0px 10px 2px rgba(161, 98, 7, 0.3);">
+        </div>
+
+        <!-- قسم "سلاح الجو" تحت "سلاح البري" - الصورة مع ظل أخضر-أزرق موزع -->
+        <div class="w-full mt-6 flex justify-center">
+            <img src="https://l.top4top.io/m_34866dw0n1.bmp" alt="صورة سلاح الجو"
+                 class="w-full h-52 rounded-lg object-cover transition-all duration-300 hover:scale-[1.02]"
+                 style="box-shadow: 0 0px 20px 5px rgba(0, 150, 136, 0.6), 0 0px 10px 2px rgba(0, 150, 136, 0.3);">
+        </div>
+
+        <!-- قسم "سلاح البحر" تحت "سلاح الجو" - الصورة مع ظل أزرق موزع بالكامل -->
+        <div class="w-full mt-6 flex justify-center">
+            <img src="https://i.top4top.io/m_34865lkhb1.bmp" alt="صورة سلاح البحر"
+                 class="w-full h-52 rounded-lg object-cover shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                 style="box-shadow: 0 0px 20px 5px rgba(59, 130, 246, 0.6), 0 0px 10px 2px rgba(59, 130, 246, 0.3);">
+        </div>
+
+        <!-- قسم "الدفاعات" تحت "سلاح البحر" - الصورة مع ظل أبيض موزع بالكامل -->
+        <div class="w-full mt-6 flex justify-center">
+            <img src="https://i.top4top.io/m_3486wuqb11.bmp" alt="صورة دفاعات"
+                 class="w-full h-52 rounded-lg object-cover shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                 style="box-shadow: 0 0px 20px 5px rgba(255, 255, 255, 0.6), 0 0px 10px 2px rgba(255, 255, 255, 0.3);">
+        </div>
+
+        <!-- قسم "الدمار الشامل" تحت "الدفاعات" - الصورة مع ظل أحمر موزع بالكامل -->
+        <div class="w-full mt-6 flex justify-center">
+            <img src="https://a.top4top.io/p_3486634s21.png" alt="صورة دمار شامل"
+                 class="w-full h-52 rounded-lg object-cover shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                 style="box-shadow: 0 0px 20px 5px rgba(255, 0, 0, 0.6), 0 0px 10px 2px rgba(255, 0, 0, 0.3);">
+        </div>
+
+    </div>
+
+    <!-- صفحة الاستكشاف -->
+    <div id="explore-page" class="page-content flex-col items-center w-full max-w-lg mb-auto">
+        <h1 class="text-white text-2xl font-bold mb-6">اكتشف صوراً جديدة!</h1>
+        <!-- تم تعديل الشبكة لتكون بعمودين افتراضيا ولتطبيق تأثير الماسونري -->
+        <div class="grid grid-cols-2 gap-6 w-full masonry-grid">
+            <!-- بطاقة صورة 1 -->
+            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
+                <img src="https://placehold.co/300x200/4a90e2/ffffff?text=طبيعة" alt="صورة طبيعة خلابة" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
+                <p class="text-xs text-gray-300 text-right w-full">مناظر طبيعية ساحرة من حول العالم.</p>
+            </div>
+
+            <!-- بطاقة صورة 2 -->
+            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
+                <img src="https://placehold.co/300x200/7ed321/ffffff?text=مدن" alt="صورة مدينة حديثة" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
+                <p class="text-xs text-gray-300 text-right w-full">أجمل المدن وناطحات السحاب.</p>
+            </div>
+
+            <!-- بطاقة صورة 3 -->
+            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
+                <img src="https://placehold.co/300x200/f5a623/ffffff?text=فضاء" alt="صورة الفضاء الخارجي" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
+                <p class="text-xs text-gray-300 text-right w-full">استكشاف أسرار الكون والفضاء.</p>
+            </div>
+
+            <!-- بطاقة صورة 4 -->
+            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
+                <img src="https://placehold.co/300x200/9b59b6/ffffff?text=حيوانات" alt="صورة حيوانات برية" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
+                <p class="text-xs text-gray-300 text-right w-full">صور رائعة لحيوانات من مختلف البيئات.</p>
+            </div>
+
+            <!-- بطاقة صورة 5 -->
+            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
+                <img src="https://placehold.co/300x200/50e3c2/ffffff?text=طعام" alt="صورة طعام شهي" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
+                <p class="text-xs text-gray-300 text-right w-full">أطباق شهية ووصفات عالمية.</p>
+            </div>
+
+            <!-- بطاقة صورة 6 -->
+            <div class="bg-gray-900 p-3 rounded-lg shadow-md flex flex-col items-center text-center">
+                <img src="https://placehold.co/300x200/bd10e0/ffffff?text=فنون" alt="صورة فنون جميلة" class="w-full h-auto rounded-md mb-2 object-cover shadow-md">
+                <p class="text-xs text-gray-300 text-right w-full">أعمال فنية وإبداعات بصرية.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة الإشعارات -->
+    <div id="notifications-page" class="page-content flex-col items-center w-full max-w-lg mb-auto">
+        <div class="w-full bg-gray-800 p-6 rounded-xl shadow-2xl flex flex-col items-center space-y-4">
+            <h1 class="text-white text-2xl font-bold mb-4">إشعاراتك</h1>
+            <div class="w-full space-y-2">
+                <div class="bg-gray-900 p-3 rounded-lg text-white flex items-center shadow-md">
+                    <span class="text-yellow-400 text-xl mr-3">&#9733;</span> <!-- Star icon -->
+                    <p class="flex-grow">لديك إشعار جديد من النظام.</p>
+                    <span class="text-gray-500 text-xs">منذ 5 دقائق</span>
+                </div>
+                <div class="bg-gray-900 p-3 rounded-lg text-white flex items-center shadow-md">
+                    <span class="text-green-400 text-xl mr-3">&#10003;</span> <!-- Checkmark icon -->
+                    <p class="flex-grow">تم تحديث ملفك الشخصي بنجاح.</p>
+                    <span class="text-gray-500 text-xs">منذ ساعة</span>
+                </div>
+                <div class="bg-gray-900 p-3 rounded-lg text-white flex items-center shadow-md">
+                    <span class="text-red-400 text-xl mr-3">&#9888;</span> <!-- Warning icon -->
+                    <p class="flex-grow">تنبيه: تم تسجيل دخول من جهاز غير معروف.</p>
+                    <span class="text-gray-500 text-xs">يوم أمس</span>
+                </div>
+            </div>
+            <p class="mt-4 text-sm text-gray-400">هنا تظهر الإشعارات الجديدة.</p>
+        </div>
+    </div>
+
+    <!-- شريط التنقل (Navigation Bar) في الأسفل -->
+    <nav class="fixed bottom-0 left-0 right-0 w-full bg-gray-900 p-3 shadow-2xl flex justify-around z-50">
+        <button id="search-btn" class="nav-btn flex flex-col items-center text-white p-2 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out">
+            <i class="fas fa-search text-xl"></i>
+        </button>
+        <button id="explore-btn" class="nav-btn flex flex-col items-center text-white p-2 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out">
+            <i class="fas fa-compass text-xl"></i>
+        </button>
+        <button id="notifications-btn" class="nav-btn flex flex-col items-center text-white p-2 rounded-lg transform hover:scale-110 transition duration-300 ease-in-out">
+            <i class="fas fa-bell text-xl"></i>
+        </button>
+    </nav>
+
+    <script>
+        // دالة لإظهار الصفحة المطلوبة وإخفاء البقية
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            // تحديث ألوان أزرار التنقل
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('text-blue-400'); // Remove active color
+                btn.classList.add('text-white'); // Add default color
+            });
+            const activeBtn = document.getElementById(pageId.replace('-page', '-btn'));
+            if (activeBtn) {
+                activeBtn.classList.remove('text-white'); // Remove default color
+                activeBtn.classList.add('text-blue-400'); // Add active color
+            }
+        }
+
+        // إضافة مستمعي الأحداث لأزرار التنقل
+        document.getElementById('search-btn').addEventListener('click', () => showPage('search-page'));
+        document.getElementById('explore-btn').addEventListener('click', () => showPage('explore-page'));
+        document.getElementById('notifications-btn').addEventListener('click', () => showPage('notifications-page'));
+
+        // إظهار صفحة البحث كصفحة افتراضية عند التحميل
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('search-page');
+        });
+    </script>
+</body>
+</html>
