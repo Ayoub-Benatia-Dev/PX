@@ -1,288 +1,778 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق أيوب الخارق</title>
+    <title>موقع بحث المقالات</title>
+    <!-- Tailwind CSS CDN (للتصميم السريع والجميل) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN (لأيقونات شريط التنقل وروابط التواصل الاجتماعي) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* تعريفات الأنيميشن */
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
-            50% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.8), 0 0 40px rgba(255, 107, 107, 0.6); }
-            100% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        @keyframes rotateIn {
-            from { opacity: 0; transform: rotate(-90deg) scale(0.5); }
-            to { opacity: 1; transform: rotate(0deg) scale(1); }
-        }
-
-        /* الأنماط الأساسية */
+        /* خط Inter هو خط عصري وواضح */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a1a1a; /* خلفية داكنة أنيقة */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي بسبب الأنيميشن */
         }
-        .container {
-            width: 100%;
-            max-width: 420px; /* عرض أقصى للهاتف، أوسع قليلا */
-            background-color: #2a2a2a; /* لون أغمق قليلاً للكونتينر */
-            border-radius: 20px; /* زوايا أكثر استدارة */
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل أعمق وأكثر نعومة */
-            border: 1px solid rgba(255, 255, 255, 0.1); /* خط رفيع حول الكونتينر */
-            animation: fadeInScale 0.8s ease-out forwards; /* أنيميشن ظهور للكونتينر */
+        /* إخفاء شريط التمرير الافتراضي لـ overflow-x-auto */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
-        .header {
-            display: flex;
-            align-items: center;
-            padding: 20px;
-            background-color: #2a2a2a;
-            gap: 15px; /* مسافة أكبر بين العناصر */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            animation: slideInUp 0.6s ease-out forwards; /* أنيميشن ظهور للهيدر */
-        }
-        .profile-pic {
-            width: 55px; /* حجم أكبر قليلاً */
-            height: 55px;
-            background: linear-gradient(45deg, #ff6b6b, #ee5253); /* تدرج لوني أحمر جذاب */
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 600; /* خط أثقل */
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4); /* ظل خفيف */
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            font-size: 14px;
-            animation: pulseGlow 2s infinite alternate ease-in-out; /* أنيميشن نبض وتوهج */
-            transition: transform 0.3s ease-in-out;
-        }
-        .profile-pic:hover {
-            transform: scale(1.1) rotate(5deg); /* تأثير عند المرور بالماوس */
-        }
-        .search-bar {
-            flex-grow: 1;
-            background-color: #3a3a3a; /* لون رمادي داكن للبحث */
-            height: 45px; /* ارتفاع أكبر قليلاً */
-            border-radius: 25px; /* زوايا أكثر استدارة */
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            color: #bbb; /* لون نص فاتح للبحث */
-            font-size: 15px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* ظل داخلي */
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease-in-out;
-            position: relative; /* لتأثير الشيمر */
-            overflow: hidden; /* لتأثير الشيمر */
-        }
-        .search-bar:focus-within {
-            border-color: #3498db;
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
-        }
-        .search-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shimmer 3s infinite linear;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .search-bar:hover::after {
-            opacity: 1;
-        }
-
-        .cards-section {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px; /* مسافة أكبر بين البطاقات */
-            padding: 20px;
-        }
-        .card {
-            background: linear-gradient(135deg, #2ecc71, #27ae60); /* تدرج لوني أخضر جذاب */
-            border-radius: 15px; /* زوايا أكثر استدارة */
-            height: 140px; /* ارتفاع أكبر للبطاقات */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3); /* ظل أخضر خفيف */
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* تأثير عند المرور بالماوس */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: rotateIn 0.8s ease-out forwards; /* أنيميشن ظهور للبطاقات */
-            opacity: 0; /* إخفاء مبدئي */
-        }
-        /* تأخير ظهور البطاقات */
-        .cards-section .card:nth-child(1) { animation-delay: 0.2s; }
-        .cards-section .card:nth-child(2) { animation-delay: 0.4s; }
-        .cards-section .card:nth-child(3) { animation-delay: 0.6s; }
-        .cards-section .card:nth-child(4) { animation-delay: 0.8s; }
-
-        .card:hover {
-            transform: translateY(-8px) scale(1.02) rotate(2deg); /* تأثير رفع وتكبير ودوران */
-            box-shadow: 0 15px 30px rgba(46, 204, 113, 0.6); /* ظل أقوى */
-        }
-        .card-large {
-            grid-row: span 2;
-            height: auto;
-            min-height: 300px; /* لضمان امتدادها على صفين بشكل جيد */
-            background: linear-gradient(135deg, #3498db, #2980b9); /* تدرج لوني أزرق للبطاقة الكبيرة */
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3); /* ظل أزرق خفيف */
-        }
-        .card-large:hover {
-            box-shadow: 0 15px 30px rgba(52, 152, 219, 0.6); /* ظل أقوى للبطاقة الكبيرة */
-        }
-
-        .posts-section {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            background-color: #2a2a2a; /* نفس لون خلفية الكونتينر */
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .post {
-            background-color: #3a3a3a; /* لون رمادي داكن للمنشورات */
-            border-radius: 15px;
-            min-height: 160px; /* ارتفاع أدنى للمنشورات */
-            padding: 20px;
-            color: #e0e0e0; /* لون نص فاتح للمنشورات */
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* ظل للمنشورات */
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            animation: slideInUp 0.7s ease-out forwards; /* أنيميشن ظهور للمنشورات */
-            opacity: 0; /* إخفاء مبدئي */
-        }
-        /* تأخير ظهور المنشورات */
-        .posts-section .post:nth-child(1) { animation-delay: 1s; }
-        .posts-section .post:nth-child(2) { animation-delay: 1.2s; }
-        .posts-section .post:nth-child(3) { animation-delay: 1.4s; }
-
-        .post:hover {
-            transform: translateY(-5px); /* تأثير رفع عند المرور بالماوس */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); /* ظل أقوى */
-        }
-        .post h3 {
-            font-weight: 700; /* خط أثقل للعناوين */
-            font-size: 1.25rem; /* حجم أكبر للعناوين */
-            margin-bottom: 10px;
-            color: #f0f0f0;
-        }
-        .post p {
-            font-size: 0.95rem; /* حجم نص مناسب */
-            line-height: 1.6;
-            color: #c0c0c0;
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Header Section -->
-        <div class="header">
-            <div class="profile-pic">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-            </div>
-            <div class="search-bar">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <span>ابحث هنا...</span>
-            </div>
+<!-- جسم الصفحة: خلفية رمادية غامقة، محتوى في المنتصف، وهامش سفلي لشريط التنقل -->
+<body class="bg-gray-800 flex flex-col items-center justify-center min-h-screen p-4 pb-20">
+
+    <!-- حاوية المحتوى الرئيسية لتوحيد العرض الأقصى والتوسيط -->
+    <div class="w-full max-w-md lg:max-w-4xl mx-auto">
+        <!-- الصورة الرئيسية في أعلى الصفحة -->
+        <img src="https://placehold.co/600x200/4a5568/ffffff?text=صورة+رئيسية" alt="صورة رئيسية" class="w-full h-48 object-cover rounded-lg shadow-lg mb-8" id="mainImage" />
+
+        <!-- قسم مربع البحث (الواجهة الرئيسية) -->
+        <div id="searchModule" class="w-full p-6 bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg shadow-lg flex flex-col items-center space-y-4 mb-8">
+            <h2 class="text-white text-xl font-bold">بحث شامل</h2>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="أدخل بحثك..."
+                class="w-full p-2 rounded-md bg-gray-700 text-white placeholder-gray-400 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button id="searchButton" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                بحث
+            </button>
         </div>
 
-        <!-- Cards Section -->
-        <div class="cards-section">
-            <div class="card">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h4c0 1.105.895 2 2 2h4c1.105 0 2-.895 2-2v-1l-1-1h-4.586a1 1 0 01-.707-.293l-2.707-2.707A1 1 0 009.75 17zM3 13h10a1 1 0 001-1V3a1 1 0 00-1-1H3a1 1 0 00-1 1v9a1 1 0 001 1z" />
-                </svg>
-                بطاقة الأخبار
-            </div>
-            <div class="card card-large">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                أهم الأحداث اليوم
-                <p class="text-sm mt-2 px-4 text-center opacity-80">اكتشف آخر المستجدات والأخبار العاجلة في منطقتك وحول العالم.</p>
-            </div>
-            <div class="card">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0l4-4m-4 4l-4-4m4 4V4" />
-                </svg>
-                معرض الصور
-            </div>
-            <div class="card">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M17 12h.01M17 15h.01M17 18h.01M12 15h.01M12 18h.01M9 18h.01M19 21H5a2 2 0 01-2-2V7a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
-                </svg>
-                التقويم
-            </div>
+        <!-- قسم البطاقات المميزة (تحت مربع البحث) -->
+        <div id="featuredCards" class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            <!-- سيتم إضافة البطاقات هنا بواسطة جافاسكريبت -->
         </div>
+    </div>
 
-        <!-- Posts Section -->
-        <div class="posts-section">
-            <div class="post">
-                <h3 class="font-bold text-lg mb-2">
-                    <span class="text-gray-500 text-sm mr-2">17 يوليو 2025</span>
-                    افتتاح مركز الشباب الجديد
-                </h3>
-                <p class="text-sm">تم اليوم افتتاح مركز الشباب الجديد في سيدي عامر، والذي يهدف إلى توفير بيئة داعمة للشباب لتطوير مهاراتهم وقدراتهم في مختلف المجالات. حضر الافتتاح العديد من الشخصيات المحلية والمسؤولين.</p>
+
+    <!-- صفحة نتائج البحث (مخفية في البداية) -->
+    <div id="resultsPage" class="hidden w-full flex-grow flex flex-col items-center p-6 max-w-4xl mx-auto">
+        <!-- زر الرجوع في الأعلى -->
+        <button id="backButton" class="self-start mb-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+            رجوع
+        </button>
+        <h3 class="text-white text-2xl font-semibold mb-6 text-center">نتائج البحث</h3>
+        <div id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            <!-- سيتم إضافة البطاقات هنا بواسطة جافاسكريبت -->
+        </div>
+        <p id="noResultsMessage" class="text-gray-400 text-center mt-6 hidden text-lg">لا توجد نتائج مطابقة لبحثك.</p>
+    </div>
+
+    <!-- صفحة استكشف (مخفية في البداية) -->
+    <div id="explorePage" class="hidden w-full flex-grow flex flex-col items-center p-6 max-w-4xl mx-auto">
+        <button id="backButtonExplore" class="self-start mb-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+            رجوع
+        </button>
+        <h3 class="text-white text-2xl font-semibold mb-6 text-center">استكشف</h3>
+        <div id="exploreArticlesContainer" class="w-full">
+            <!-- سيتم إضافة المقالات هنا بواسطة جافاسكريبت مع تصميم متجاوب -->
+        </div>
+    </div>
+
+    <!-- صفحة الإشعارات (مخفية في البداية) -->
+    <div id="notificationsPage" class="hidden w-full flex-grow flex flex-col items-center p-6 max-w-4xl mx-auto">
+        <button id="backButtonNotifications" class="self-start mb-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+            رجوع
+        </button>
+        <h3 class="text-white text-2xl font-semibold mb-6 text-center">الإشعارات</h3>
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- مثال إشعار 1: مربع البحث -->
+            <div class="bg-gray-700 p-4 rounded-lg shadow-xl text-white flex items-center space-x-4">
+                <span class="text-3xl">🔍</span> <!-- إيموجي للبحث -->
+                <div class="text-right">
+                    <p class="font-bold text-lg">تحديث: مربع البحث الجديد</p>
+                    <p class="text-sm text-gray-300">تم إضافة مربع بحث شامل لتسهيل عملية العثور على المحتوى.</p>
+                </div>
             </div>
-            <div class="post">
-                <h3 class="font-bold text-lg mb-2">
-                    <span class="text-gray-500 text-sm mr-2">16 يوليو 2025</span>
-                    ورشة عمل حول ريادة الأعمال
-                </h3>
-                <p class="text-sm">نظمت جمعية "أمل الغد" ورشة عمل مكثفة حول أساسيات ريادة الأعمال، استهدفت الشباب الطموح من المنطقة. تضمنت الورشة نصائح عملية من خبراء في المجال وكيفية بدء المشاريع الصغيرة.</p>
+            <!-- مثال إشعار 2: الصورة الرئيسية -->
+            <div class="bg-gray-700 p-4 rounded-lg shadow-xl text-white flex items-center space-x-4">
+                <span class="text-3xl">🖼️</span> <!-- إيموجي للصورة -->
+                <div class="text-right">
+                    <p class="font-bold text-lg">إضافة: الصورة الرئيسية</p>
+                    <p class="text-sm text-gray-300">الآن توجد صورة رئيسية جذابة في أعلى الصفحة لتعزيز الواجهة.</p>
+                </div>
             </div>
-            <div class="post">
-                <h3 class="font-bold text-lg mb-2">
-                    <span class="text-gray-500 text-sm mr-2">15 يوليو 2025</span>
-                    حملة تنظيف واسعة في المدينة
-                </h3>
-                <p class="text-sm">قام متطوعون من مختلف الأحياء بتنظيم حملة تنظيف واسعة النطاق في وسط المدينة، بهدف الحفاظ على نظافة وجمال البيئة. لاقت الحملة استحسانا كبيرا من السكان.</p>
+            <!-- مثال إشعار 3: البطاقات المميزة -->
+            <div class="bg-gray-700 p-4 rounded-lg shadow-xl text-white flex items-center space-x-4">
+                <span class="text-3xl">🎴</span> <!-- إيموجي للبطاقات -->
+                <div class="text-right">
+                    <p class="font-bold text-lg">تحسين: بطاقات مميزة</p>
+                    <p class="text-sm text-gray-300">تم إضافة 3 بطاقات مميزة أسفل مربع البحث لتسليط الضوء على المحتوى الهام.</p>
+                </div>
+            </div>
+            <!-- مثال إشعار 4: شريط التنقل السفلي -->
+            <div class="bg-gray-700 p-4 rounded-lg shadow-xl text-white flex items-center space-x-4">
+                <span class="text-3xl">🧭</span> <!-- إيموجي للتنقل -->
+                <div class="text-right">
+                    <p class="font-bold text-lg">ميزة جديدة: شريط التنقل السفلي</p>
+                    <p class="text-sm text-gray-300">للوصول السريع، تم إضافة شريط تنقل سفلي بأيقونات رئيسية.</p>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- صفحة حول (مخفية في البداية) -->
+    <div id="aboutPage" class="hidden w-full flex-grow flex flex-col items-center p-6 max-w-4xl mx-auto bg-gradient-to-br from-gray-900 to-black relative">
+        <button id="backButtonAbout" class="absolute top-6 left-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 z-10">
+            رجوع
+        </button>
+        <h3 class="text-white text-3xl font-extrabold mb-10 text-center relative z-0">حول</h3>
+
+        <!-- زر المساعدة -->
+        <button id="helpButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mb-12">
+            مساعدة
+        </button>
+
+        <!-- قسم تحميل لعبة Rusted Warfare -->
+        <div class="w-full max-w-md bg-gray-700 rounded-lg shadow-xl p-6 text-center mb-8">
+            <h4 class="text-white text-xl font-bold mb-4">تحميل لعبة Rusted Warfare</h4>
+            <div class="flex flex-col space-y-4">
+                <a href="https://play.google.com/store/apps/details?id=com.corrodinggames.rts" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <i class="fab fa-google-play mr-2"></i> تحميل من متجر بلاي
+                </a>
+                <a href="https://store.steampowered.com/app/640380/Rusted_Warfare__RTS/" target="_blank" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <i class="fab fa-steam mr-2"></i> تحميل من ستيم
+                </a>
+            </div>
+            <div class="mt-6">
+                <h5 class="text-white text-lg font-semibold mb-2">مجموعة اللعبة على تليجرام:</h5>
+                <a href="https://t.me/rusted_warfare_G" target="_blank" class="text-blue-400 hover:text-blue-200 transition-colors duration-200 text-lg flex items-center justify-center">
+                    <i class="fab fa-telegram mr-2 text-2xl"></i> Rusted Warfare Group
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة المساعدة (جديدة ومخفية في البداية) -->
+    <div id="helpPage" class="hidden w-full flex-grow flex flex-col items-center p-6 max-w-4xl mx-auto bg-gradient-to-br from-gray-900 to-black relative">
+        <button id="backButtonHelp" class="absolute top-6 left-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 z-10">
+            رجوع
+        </button>
+        <h3 class="text-white text-3xl font-extrabold mb-10 text-center relative z-0">المساعدة</h3>
+        <div id="helpProfilesContainer" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- سيتم إضافة ملفات التعريف هنا بواسطة جافاسكريبت -->
+        </div>
+    </div>
+
+    <!-- صفحة تفاصيل المقال (جديدة ومخفية في البداية) -->
+    <div id="articleDetailPage" class="hidden w-full flex-grow flex flex-col items-center p-6 max-w-4xl mx-auto">
+        <button id="backButtonArticleDetail" class="self-start mb-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+            رجوع
+        </button>
+        <div class="bg-gray-700 p-6 rounded-lg shadow-xl text-white text-center w-full">
+            <h3 id="articleDetailTitle" class="text-3xl font-bold mb-4"></h3>
+            <img id="articleDetailImage" src="" alt="Article Image" class="w-full h-64 object-cover rounded-lg shadow-md mb-4" />
+            <span id="articleDetailEmoji" class="text-6xl mb-4 block"></span>
+            <p id="articleDetailDescription" class="text-lg text-gray-300 text-right leading-relaxed"></p>
+            <!-- يمكنك إضافة محتوى إضافي للمقال هنا إذا أردت -->
+        </div>
+    </div>
+
+
+    <!-- شريط التنقل السفلي (ثابت في الأسفل) -->
+    <div class="fixed bottom-0 left-0 right-0 z-50">
+        <div id="bottomNavBar" class="bg-gray-900 text-white p-4 flex justify-around items-center shadow-lg rounded-t-lg w-full max-w-md lg:max-w-xl mx-auto">
+            <!-- أيقونة البحث -->
+            <div id="navSearch" class="flex flex-col items-center text-sm cursor-pointer hover:text-blue-400 transition-colors duration-200">
+                <i class="fas fa-search text-2xl"></i>
+            </div>
+            <!-- أيقونة استكشف -->
+            <div id="navExplore" class="flex flex-col items-center text-sm cursor-pointer hover:text-blue-400 transition-colors duration-200">
+                <i class="fas fa-compass text-2xl"></i>
+            </div>
+            <!-- أيقونة الإشعارات -->
+            <div id="navNotifications" class="flex flex-col items-center text-sm cursor-pointer hover:text-blue-400 transition-colors duration-200">
+                <i class="fas fa-bell text-2xl"></i>
+            </div>
+            <!-- أيقونة حول -->
+            <div id="navAbout" class="flex flex-col items-center text-sm cursor-pointer hover:text-blue-400 transition-colors duration-200">
+                <i class="fas fa-info-circle text-2xl"></i> <!-- أيقونة 'حول' أو 'مساعدة' -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // جلب عناصر HTML التي سنحتاجها
+        const mainImage = document.getElementById('mainImage');
+        const searchModule = document.getElementById('searchModule');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const featuredCardsContainer = document.getElementById('featuredCards');
+        const resultsPage = document.getElementById('resultsPage');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        const backButton = document.getElementById('backButton');
+        const bottomNavBar = document.getElementById('bottomNavBar');
+
+        // عناصر الصفحات الجديدة
+        const explorePage = document.getElementById('explorePage');
+        const exploreArticlesContainer = document.getElementById('exploreArticlesContainer');
+        const notificationsPage = document.getElementById('notificationsPage');
+        const aboutPage = document.getElementById('aboutPage'); // صفحة حول
+        const helpButton = document.getElementById('helpButton'); // زر المساعدة
+        const helpPage = document.getElementById('helpPage'); // صفحة المساعدة
+        const helpProfilesContainer = document.getElementById('helpProfilesContainer'); // حاوية ملفات التعريف في صفحة المساعدة
+        const articleDetailPage = document.getElementById('articleDetailPage');
+        const articleDetailTitle = document.getElementById('articleDetailTitle');
+        const articleDetailImage = document.getElementById('articleDetailImage');
+        const articleDetailEmoji = document.getElementById('articleDetailEmoji');
+        const articleDetailDescription = document.getElementById('articleDetailDescription');
+        const backButtonArticleDetail = document.getElementById('backButtonArticleDetail');
+
+        // أزرار الرجوع للصفحات الجديدة
+        const backButtonExplore = document.getElementById('backButtonExplore');
+        const backButtonNotifications = document.getElementById('backButtonNotifications');
+        const backButtonAbout = document.getElementById('backButtonAbout');
+        const backButtonHelp = document.getElementById('backButtonHelp'); // زر الرجوع لصفحة المساعدة
+
+        // أيقونات شريط التنقل السفلي
+        const navSearch = document.getElementById('navSearch');
+        const navExplore = document.getElementById('navExplore');
+        const navNotifications = document.getElementById('navNotifications');
+        const navAbout = document.getElementById('navAbout'); // أيقونة 'حول' في الشريط السفلي
+
+        // قائمة بجميع الأقسام الرئيسية لإخفائها/إظهارها بسهولة
+        const allSections = [mainImage, searchModule, featuredCardsContainer, resultsPage, explorePage, notificationsPage, aboutPage, helpPage, articleDetailPage];
+
+        // دالة لإخفاء جميع الأقسام وإظهار قسم معين
+        function showSection(sectionToShow) {
+            allSections.forEach(section => {
+                if (section) { // التحقق مما إذا كان العنصر موجودًا
+                    section.classList.add('hidden');
+                }
+            });
+            if (sectionToShow) {
+                sectionToShow.classList.remove('hidden');
+            }
+            bottomNavBar.classList.remove('hidden'); // إظهار شريط التنقل السفلي دائمًا
+        }
+
+        // بيانات المقالات (هنا يمكنك تعديل المقالات وإضافة المزيد)
+        const allArticlesData = [
+            {
+                id: 'art1',
+                title: "تاريخ الجزائر العريق",
+                description: "اكتشفوا معنا أهم المحطات في تاريخ الجزائر الغني بالحضارات والإنجازات. الجزائر، بلد المليون ونصف مليون شهيد، تتميز بتاريخ طويل وعميق يمتد لآلاف السنين. من الحضارات القديمة مثل النوميديين والرومان، إلى الفتوحات الإسلامية، وصولاً إلى المقاومة الباسلة ضد الاستعمار الفرنسي وثورة التحرير المجيدة. كل زاوية في هذا الوطن تحمل قصة، وكل حجر يروي حكاية صمود وعزيمة. تعرفوا على شخصيات تاريخية عظيمة ساهمت في بناء هذا المجد، وعلى المعارك التي شكلت هويتنا الوطنية. تاريخنا هو فخرنا، وهو الأساس الذي نبني عليه مستقبلنا المشرق.",
+                imageUrl: "https://placehold.co/800x400/007bff/ffffff?text=تاريخ+الجزائر+العريق",
+                emoji: "🇩🇿",
+                type: "featured"
+            },
+            {
+                id: 'art2',
+                title: "كرة القدم الجزائرية: إنجازات وبطولات",
+                description: "نظرة على أبرز اللحظات والإنجازات في مسيرة كرة القدم الجزائرية. كرة القدم في الجزائر ليست مجرد رياضة، بل هي شغف يجمع الملايين. من فوزنا بكأس أمم إفريقيا، إلى تألق لاعبينا في المحافل الدولية، مروراً باللحظات التاريخية في كأس العالم. الأندية الجزائرية أيضاً تركت بصمتها في البطولات القارية. هذا المقال يستعرض أهم الإنجازات، اللاعبين الأساطير، والمدربين الذين صنعوا مجد الكرة الجزائرية. إنه تاريخ مليء بالفخر والإثارة، يعكس روح التحدي والإصرار التي يتمتع بها الشعب الجزائري.",
+                imageUrl: "https://placehold.co/800x400/28a745/ffffff?text=كرة+القدم+الجزائرية",
+                emoji: "⚽",
+                type: "featured"
+            },
+            {
+                id: 'art3',
+                title: "جمال الصحراء الجزائرية الساحر",
+                description: "رحلة افتراضية عبر الكثبان الرملية والواحات الخلابة في صحراء الجزائر. الصحراء الجزائرية، عالم آخر من الجمال والهدوء. من الكثبان الرملية الذهبية التي تمتد على مد البصر، إلى الواحات الخضراء التي تكسر رتابة اللون الأصفر، مروراً بالمدن القديمة المنحوتة في الصخور. إنها وجهة سياحية فريدة من نوعها، تقدم تجربة لا تُنسى لمحبي المغامرة والطبيعة. استكشفوا معنا الطاسيلي ناجر، جنة ما قبل التاريخ، وغروب الشمس الساحر الذي يلون السماء بألوان لا توصف. الصحراء الجزائرية ليست مجرد رمال، بل هي روح وعمق وتاريخ.",
+                imageUrl: "https://placehold.co/800x400/ffc107/000000?text=جمال+الصحراء+الجزائرية",
+                emoji: "🏜️",
+                type: "featured"
+            },
+            {
+                id: 'art4',
+                title: "وصفات طبخ جزائرية تقليدية",
+                description: "تعلموا تحضير أشهى الأطباق الجزائرية الأصيلة خطوة بخطوة. المطبخ الجزائري غني ومتنوع، يجمع بين النكهات المتوسطية والعربية والأمازيغية. من الكسكسي الشهي، إلى الشخشوخة، مروراً بالبوراك والحريرة. كل طبق يحكي قصة منطقة وتاريخ. هذا المقال يقدم لكم وصفات مفصلة لأشهر الأطباق التقليدية، مع نصائح لضمان نجاحها. استعدوا لتجربة مذاقات لا تُنسى، واكتشفوا سر الضيافة الجزائرية من خلال أطباقها الشهية.",
+                imageUrl: "https://placehold.co/800x400/dc3545/ffffff?text=وصفات+طبخ+جزائرية",
+                emoji: "🍲",
+                type: "search"
+            },
+            {
+                id: 'art5',
+                title: "مستقبل الذكاء الاصطناعي",
+                description: "كيف سيغير الذكاء الاصطناعي حياتنا في السنوات القادمة؟ الذكاء الاصطناعي لم يعد مجرد خيال علمي، بل أصبح جزءاً لا يتجزأ من حياتنا اليومية. من السيارات ذاتية القيادة، إلى المساعدات الصوتية، وصولاً إلى الأنظمة الطبية المتقدمة. هذا المقال يستعرض آخر التطورات في مجال الذكاء الاصطناعي، وكيف سيؤثر على مختلف جوانب حياتنا: العمل، التعليم، الصحة، وحتى الترفيه. هل نحن مستعدون لمستقبل تحكمه الآلات الذكية؟ اكتشفوا معنا الفرص والتحديات التي يحملها هذا التطور المذهل.",
+                imageUrl: "https://placehold.co/800x400/6f42c1/ffffff?text=مستقبل+الذكاء+الاصطناعي",
+                emoji: "🤖",
+                type: "search"
+            },
+            {
+                id: 'art6',
+                title: "اقتصاد العالم: تحديات وفرص",
+                description: "تحليل لأبرز التحديات الاقتصادية العالمية والفرص المتاحة. الاقتصاد العالمي يتغير باستمرار، ويواجه تحديات كبيرة مثل التضخم، التغير المناخي، والاضطرابات الجيوسياسية. لكن في نفس الوقت، هناك فرص هائلة للنمو والابتكار في مجالات مثل الطاقة المتجددة، التكنولوجيا الرقمية، والاقتصاد الدائري. هذا المقال يقدم تحليلاً شاملاً للوضع الاقتصادي الراهن، ويستعرض الاستراتيجيات التي يمكن للدول والشركات اتباعها لتحقيق الازدهار. فهم الاقتصاد العالمي هو مفتاح النجاح في عالمنا المعاصر.",
+                imageUrl: "https://placehold.co/800x400/fd7e14/ffffff?text=اقتصاد+العالم",
+                emoji: "📈",
+                type: "search"
+            },
+            {
+                id: 'art7',
+                title: "نصائح للسفر إلى الجزائر",
+                description: "دليل شامل للمسافرين الراغبين في زيارة الجزائر. الجزائر، جوهرة المغرب العربي، تنتظركم لاكتشاف كنوزها الخفية. من مدنها الساحلية الساحرة، إلى جبالها الشاهقة، وصحرائها الشاسعة. هذا المقال يقدم لكم كل ما تحتاجونه لتخطيط رحلتكم: أفضل الأوقات للزيارة، الأماكن التي يجب رؤيتها، نصائح حول الإقامة والنقل، وحتى بعض العبارات الأساسية باللغة العربية. استعدوا لمغامرة ثقافية وتاريخية لا تُنسى في بلد الكرم والجمال.",
+                imageUrl: "https://placehold.co/800x400/20c997/ffffff?text=نصائح+السفر+إلى+الجزائر",
+                emoji: "✈️",
+                type: "search"
+            },
+            {
+                id: 'art8',
+                title: "روائع الطبيعة الخلابة",
+                description: "اكتشف أجمل المناظر الطبيعية حول العالم. من الشلالات المتدفقة، إلى الغابات المطيرة الكثيفة، مروراً بالجبال الشاهقة والبحيرات الصافية. كوكبنا مليء بالروائع الطبيعية التي تأسر الألباب. هذا المقال يأخذكم في جولة حول العالم لاكتشاف بعض من أروع هذه الأماكن، ويقدم لكم صوراً ومعلومات عن كيفية زيارتها. استعدوا للانبهار بجمال الطبيعة الخالص، وتذكروا أهمية الحفاظ عليها للأجيال القادمة.",
+                imageUrl: "https://placehold.co/300x400/A0AEC0/ffffff?text=طبيعة+خلابة", // صورة طويلة للجوال
+                emoji: "🏞️",
+                type: "explore", // نوع المقال: لاستكشف
+                mobileGridClass: "col-span-1 row-span-2" // لتصميم الجوال (طويل)
+            },
+            {
+                id: 'art9',
+                title: "ابتكارات تكنولوجية حديثة",
+                description: "أحدث الابتكارات التي ستغير المستقبل. عالم التكنولوجيا يتطور بسرعة البرق، وكل يوم يظهر ابتكار جديد يغير حياتنا. من الهواتف الذكية القابلة للطي، إلى الطباعة ثلاثية الأبعاد، مروراً بالواقع الافتراضي والمعزز. هذا المقال يستعرض أبرز الابتكارات التكنولوجية التي ستشكل مستقبلنا، ويشرح كيف يمكن لهذه التقنيات أن تحسن جودة حياتنا وتفتح آفاقاً جديدة. ابقوا على اطلاع بآخر المستجدات في عالم التكنولوجيا المذهل.",
+                imageUrl: "https://placehold.co/300x200/718096/ffffff?text=تكنولوجيا+حديثة", // صورة قصيرة للجوال
+                emoji: "💡",
+                type: "explore"
+            },
+            {
+                id: 'art10',
+                title: "الفضاء: أسرار الكون",
+                description: "رحلة إلى أعماق الفضاء واكتشاف أسراره. الكون الشاسع مليء بالأسرار والعجائب التي لا نهاية لها. من الكواكب البعيدة، إلى النجوم المتلألئة، مروراً بالمجرات التي تبعد عنا ملايين السنين الضوئية. هذا المقال يأخذكم في رحلة استكشافية إلى الفضاء، ويقدم لكم معلومات شيقة عن الثقوب السوداء، المستعرات العظمى، وإمكانية وجود حياة خارج كوكب الأرض. استعدوا للانبهار بعظمة الكون وجماله اللامتناهي.",
+                imageUrl: "https://placehold.co/300x200/2D3748/ffffff?text=أسرار+الكون",
+                emoji: "🌌",
+                type: "explore"
+            },
+            {
+                id: 'art11',
+                title: "عجائب الدنيا السبع",
+                description: "تعرف على عجائب الدنيا القديمة والحديثة. منذ آلاف السنين، أذهل البشر العالم بإبداعاتهم المعمارية والفنية. من أهرامات الجيزة الشاهقة، إلى حدائق بابل المعلقة، مروراً بسور الصين العظيم. هذا المقال يستعرض عجائب الدنيا السبع القديمة والحديثة، ويقدم لكم لمحة عن تاريخها وأهميتها الثقافية. إنها شهادة على عبقرية الإنسان وقدرته على بناء ما هو عظيم ومدهش.",
+                imageUrl: "https://placehold.co/300x200/4A5568/ffffff?text=عجائب+الدنيا",
+                emoji: "🏛️",
+                type: "explore"
+            },
+            {
+                id: 'art12',
+                title: "عالم الحيوانات البرية",
+                description: "اكتشف الحياة البرية المتنوعة في الغابات والصحاري. عالم الحيوانات البرية مليء بالتنوع والجمال، من الأسود المهيبة في السافانا، إلى الدببة القطبية في القطب الشمالي، مروراً بالطيور الملونة في الغابات الاستوائية. هذا المقال يأخذكم في رحلة إلى مواطن الحيوانات البرية المختلفة، ويقدم لكم معلومات شيقة عن سلوكياتها، بيئاتها، وأهمية الحفاظ عليها. إنه عالم مدهش يستحق الاستكشاف والحماية.",
+                imageUrl: "https://placehold.co/300x400/A0AEC0/ffffff?text=حيوانات+برية",
+                emoji: "🦁",
+                type: "explore",
+                mobileGridClass: "col-span-1 row-span-2"
+            },
+            {
+                id: 'art13',
+                title: "أسرار المحيطات",
+                description: "غوص في أعماق المحيطات واكتشاف الحياة البحرية. المحيطات تغطي أكثر من 70% من سطح كوكبنا، وما زالت تحتفظ بالكثير من الأسرار. من الشعاب المرجانية الملونة، إلى الكائنات البحرية الغريبة، مروراً بالخنادق العميقة التي لم تصلها يد الإنسان بعد. هذا المقال يدعوكم للغوص في أعماق المحيطات، ويكشف لكم بعضاً من عجائبها وألغازها. إنه عالم مذهل وغامض، يلعب دوراً حيوياً في حياة كوكبنا.",
+                imageUrl: "https://placehold.co/300x200/718096/ffffff?text=أسرار+المحيطات",
+                emoji: "🌊",
+                type: "explore"
+            },
+            {
+                id: 'art14',
+                title: "تاريخ الفن العالمي",
+                description: "نظرة على أبرز الحركات الفنية عبر العصور. الفن هو مرآة الحضارات، يعكس تطور الفكر البشري وجمالياته. من رسومات الكهوف البدائية، إلى الفن المصري القديم، مروراً بالنهضة الأوروبية والفن الحديث. هذا المقال يستعرض أبرز الحركات الفنية والمدارس الفنية التي شكلت تاريخ الفن العالمي، ويقدم لكم لمحة عن أشهر الفنانين وأعمالهم. إنه رحلة ممتعة عبر الزمن، تكتشفون فيها كيف عبر الإنسان عن نفسه وعن عالمه من خلال الفن.",
+                imageUrl: "https://placehold.co/300x200/2D3748/ffffff?text=تاريخ+الفن",
+                emoji: "🎨",
+                type: "explore"
+            },
+            {
+                id: 'art15',
+                title: "المدن الأكثر زيارة في العالم",
+                description: "تعرف على الوجهات السياحية الأكثر شعبية. إذا كنت من محبي السفر، فهذا المقال لك! نستعرض فيه المدن الأكثر زيارة في العالم، من باريس الرومانسية، إلى طوكيو الحديثة، مروراً بروما التاريخية ودبي الفاخرة. كل مدينة لها سحرها الخاص، وتقدم تجربة فريدة لزوارها. هذا المقال يقدم لكم لمحة عن أبرز المعالم السياحية في كل مدينة، ونصائح لتخطيط رحلتكم القادمة. استعدوا لاستكشاف العالم من خلال هذه المدن الساحرة.",
+                imageUrl: "https://placehold.co/300x200/4A5568/ffffff?text=مدن+عالمية",
+                emoji: "✈️",
+                type: "explore"
+            }
+        ];
+
+        // دالة مساعدة لإنشاء عنصر بطاقة المقال
+        // هذه الدالة ستجعل الكود منظمًا وسهل التعديل
+        function createArticleCardElement(article, isExploreMobileLayout = false, isExploreDesktopLayout = false) {
+            const cardElement = document.createElement('div');
+            const imgElement = document.createElement('img');
+            const contentContainer = document.createElement('div');
+            const emojiElement = document.createElement('span');
+            const titleElement = document.createElement('h4');
+            const descriptionElement = document.createElement('p');
+
+            // 1. تصميم البطاقة الأساسي المشترك
+            cardElement.className = 'bg-gradient-to-br from-gray-900 to-gray-700 p-2 rounded-xl shadow-2xl text-white ' +
+                                    'transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-3xl ' +
+                                    'border border-gray-600 hover:border-blue-500 overflow-hidden cursor-pointer'; // إضافة cursor-pointer
+
+            // 2. إعداد عناصر المحتوى المشتركة
+            imgElement.src = article.imageUrl;
+            imgElement.alt = article.title;
+            imgElement.onerror = "this.onerror=null;this.src='https://placehold.co/150x150/6c757d/ffffff?text=خطأ+صورة';"; // صورة احتياطية عند الخطأ
+
+            emojiElement.className = 'text-4xl mb-2';
+            emojiElement.textContent = article.emoji;
+
+            titleElement.className = 'font-bold text-lg mb-1 text-center';
+            titleElement.textContent = article.title;
+
+            descriptionElement.className = 'text-sm text-gray-300 text-center';
+            // نستخدم جزءًا من الوصف فقط للبطاقة، الوصف الكامل في صفحة التفاصيل
+            descriptionElement.textContent = article.description.substring(0, 100) + '...';
+
+            // 3. إضافة العناصر إلى حاوية المحتوى (دائمًا نفس الترتيب)
+            contentContainer.appendChild(emojiElement);
+            contentContainer.appendChild(titleElement);
+            contentContainer.appendChild(descriptionElement);
+
+            // 4. تطبيق التصميم الخاص بكل نوع من البطاقات
+            if (isExploreMobileLayout) {
+                // تصميم استكشف للهاتف
+                // Split classes if there are multiple, e.g., "col-span-1 row-span-2"
+                if (article.mobileGridClass) {
+                    article.mobileGridClass.split(' ').forEach(cls => {
+                        if (cls.trim() !== '') { // Ensure no empty strings are added
+                            cardElement.classList.add(cls);
+                        }
+                    });
+                }
+                contentContainer.className += ' w-full flex flex-col items-center justify-center text-right p-4';
+                if (article.mobileGridClass && article.mobileGridClass.includes('row-span-2')) {
+                    cardElement.style.minHeight = '200px';
+                } else {
+                    cardElement.style.minHeight = '90px';
+                }
+                cardElement.appendChild(contentContainer); // إضافة حاوية المحتوى فقط
+            } else if (isExploreDesktopLayout) {
+                // تصميم استكشف لسطح المكتب
+                contentContainer.className += ' w-full flex flex-col items-center justify-center text-right p-4';
+                cardElement.appendChild(contentContainer); // إضافة حاوية المحتوى فقط
+            } else {
+                // التصميم الافتراضي (البطاقات المميزة ونتائج البحث) - مع الصور
+                cardElement.classList.add('flex', 'flex-row-reverse', 'items-start');
+                imgElement.className = "w-1/2 h-full object-cover rounded-tr-xl rounded-br-xl";
+                contentContainer.className += ' w-1/2 p-4 flex flex-col items-center justify-center text-right';
+                cardElement.appendChild(imgElement);
+                cardElement.appendChild(contentContainer);
+            }
+
+            // إضافة معالج حدث للضغط على البطاقة
+            cardElement.addEventListener('click', () => {
+                displayArticleDetails(article); // عرض تفاصيل المقال عند الضغط
+            });
+
+            return cardElement;
+        }
+
+        // دالة لعرض البطاقات المميزة في الصفحة الرئيسية
+        function displayFeaturedCards() {
+            featuredCardsContainer.innerHTML = ''; // مسح البطاقات الموجودة
+            const featuredArticles = allArticlesData.filter(article => article.type === 'featured');
+            featuredArticles.slice(0, 3).forEach(article => { // عرض أول 3 مقالات مميزة
+                const card = createArticleCardElement(article);
+                featuredCardsContainer.appendChild(card);
+            });
+        }
+
+        // دالة لعرض بطاقات نتائج البحث
+        function displaySearchResults(query) {
+            cardsContainer.innerHTML = ''; // مسح البطاقات السابقة
+            noResultsMessage.classList.add('hidden'); // إخفاء رسالة "لا توجد نتائج"
+
+            const filteredArticles = allArticlesData.filter(article =>
+                (article.type === 'search' || article.type === 'featured' || article.type === 'explore') && // البحث في كل أنواع المقالات
+                (article.title.toLowerCase().includes(query.toLowerCase()) ||
+                article.description.toLowerCase().includes(query.toLowerCase()))
+            );
+
+            if (filteredArticles.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                filteredArticles.forEach(article => {
+                    const card = createArticleCardElement(article);
+                    cardsContainer.appendChild(card);
+                });
+            }
+        }
+
+        // دالة لعرض مقالات صفحة استكشف
+        function displayExploreArticles() {
+            exploreArticlesContainer.innerHTML = ''; // مسح المقالات السابقة
+            const exploreArticles = allArticlesData.filter(article => article.type === 'explore');
+
+            // Mobile Layout: Two columns, one tall, one short, then two short, etc.
+            const mobileGridDiv = document.createElement('div');
+            mobileGridDiv.className = 'grid grid-cols-2 gap-4 md:hidden'; // Only visible on mobile
+
+            // Desktop Layout: Multiple columns, rows of images
+            const desktopGridDiv = document.createElement('div');
+            desktopGridDiv.className = 'hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4'; // Only visible on desktop
+
+            exploreArticles.forEach(article => {
+                // For mobile cards
+                const mobileCard = createArticleCardElement(article, true, false); // isExploreMobileLayout = true
+                mobileGridDiv.appendChild(mobileCard);
+
+                // For desktop cards
+                const desktopCard = createArticleCardElement(article, false, true); // isExploreDesktopLayout = true
+                desktopGridDiv.appendChild(desktopCard);
+            });
+
+            exploreArticlesContainer.appendChild(mobileGridDiv);
+            exploreArticlesContainer.appendChild(desktopGridDiv);
+        }
+
+        // دالة لعرض تفاصيل مقال معين
+        function displayArticleDetails(article) {
+            articleDetailTitle.textContent = article.title;
+            articleDetailImage.src = article.imageUrl;
+            articleDetailImage.alt = article.title;
+            articleDetailEmoji.textContent = article.emoji;
+            articleDetailDescription.textContent = article.description; // عرض الوصف الكامل
+
+            showSection(articleDetailPage); // إظهار صفحة تفاصيل المقال
+        }
+
+
+        // بيانات حسابات التواصل الاجتماعي (يمكنك تحديث هذه الروابط)
+        const socialMediaPlatforms = [
+            { id: 'facebook', iconClass: 'fab fa-facebook-square', colorClass: 'text-blue-500', hoverColorClass: 'hover:text-blue-700' },
+            { id: 'telegram', iconClass: 'fab fa-telegram', colorClass: 'text-blue-400', hoverColorClass: 'hover:text-blue-600' },
+            { id: 'instagram', iconClass: 'fab fa-instagram-square', colorClass: 'text-pink-500', hoverColorClass: 'hover:text-pink-700' },
+            { id: 'whatsapp', iconClass: 'fab fa-whatsapp-square', colorClass: 'text-green-500', hoverColorClass: 'hover:text-green-700' }
+        ];
+
+        // بيانات الملفات الشخصية (يمكنك تعديل هذه البيانات وإضافة المزيد)
+        const allProfilesData = [
+            {
+                name: "أيوب",
+                imageUrl: "https://placehold.co/150x150/A0AEC0/ffffff?text=صورة+أيوب",
+                socialMedia: {
+                    facebook: "https://facebook.com/ayoub_profile",
+                    telegram: "https://t.me/ayoub_profile",
+                    instagram: "https://instagram.com/ayoub_profile",
+                    whatsapp: "https://wa.me/1234567890"
+                }
+            },
+            {
+                name: "فاطمة",
+                imageUrl: "https://placehold.co/150x150/FFC0CB/000000?text=صورة+فاطمة",
+                socialMedia: {
+                    facebook: "https://facebook.com/fatima_profile",
+                    instagram: "https://instagram.com/fatima_profile"
+                }
+            },
+            {
+                name: "أحمد",
+                imageUrl: "https://placehold.co/150x150/ADD8E6/000000?text=صورة+أحمد",
+                socialMedia: {
+                    telegram: "https://t.me/ahmed_profile",
+                    whatsapp: "https://wa.me/1122334455"
+                }
+            }
+        ];
+
+        // دالة لإنشاء بطاقة ملف شخصي
+        function createProfileCard(profile) {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'bg-gradient-to-br from-gray-900 to-gray-700 p-4 rounded-xl shadow-lg text-white text-center flex flex-col items-center space-y-4';
+
+            const imgElement = document.createElement('img');
+            imgElement.src = profile.imageUrl;
+            imgElement.alt = `صورة ${profile.name}`;
+            imgElement.className = "w-32 h-32 object-cover rounded-xl border-2 border-blue-400"; // صورة مربعة بحواف دائرية وكبيرة
+
+            const nameElement = document.createElement('p');
+            nameElement.className = "text-xl font-bold";
+            nameElement.textContent = profile.name;
+
+            const socialMediaDiv = document.createElement('div');
+            socialMediaDiv.className = "flex justify-center space-x-4 mt-2";
+
+            socialMediaPlatforms.forEach(platform => {
+                const url = profile.socialMedia[platform.id];
+                if (url && url.trim() !== "") {
+                    const linkElement = document.createElement('a');
+                    linkElement.href = url;
+                    linkElement.target = "_blank";
+                    linkElement.className = `${platform.colorClass} ${platform.hoverColorClass} transition-colors duration-200`;
+                    linkElement.innerHTML = `<i class="${platform.iconClass} text-3xl"></i>`;
+                    socialMediaDiv.appendChild(linkElement);
+                }
+            });
+
+            cardElement.appendChild(imgElement);
+            cardElement.appendChild(nameElement);
+            if (socialMediaDiv.children.length > 0) { // أضف قسم التواصل الاجتماعي فقط إذا كانت هناك روابط
+                cardElement.appendChild(socialMediaDiv);
+            }
+
+            return cardElement;
+        }
+
+
+        // دالة لعرض صفحة حول
+        function displayAboutPage() {
+            // مسح المحتوى السابق لصفحة حول
+            const aboutPageContent = document.querySelector('#aboutPage > div:not(button):not(h3)'); // كل الديفات ما عدا زر الرجوع والعنوان
+            if (aboutPageContent) {
+                aboutPageContent.remove(); // إزالة المحتوى القديم
+            }
+
+            // إنشاء حاوية جديدة للمحتوى
+            const newContentContainer = document.createElement('div');
+            newContentContainer.className = "w-full flex flex-col items-center"; // توسيط المحتوى
+
+            // 1. عرض الملف الشخصي الرئيسي (أيوب)
+            const ayoubProfile = allProfilesData[0];
+            const ayoubCard = createProfileCard(ayoubProfile);
+            ayoubCard.classList.remove('bg-gradient-to-br', 'from-gray-900', 'to-gray-700'); // إزالة الخلفية الافتراضية
+            ayoubCard.classList.add('bg-gradient-to-br', 'from-blue-800', 'to-purple-800', 'p-8', 'shadow-2xl', 'transform', 'hover:scale-105', 'mb-12', 'w-full', 'max-w-md'); // إضافة تصميم أيوب الخاص
+            
+            // إعادة بناء محتوى بطاقة أيوب ليتناسب مع التصميم الجديد
+            ayoubCard.innerHTML = `
+                <img src="${ayoubProfile.imageUrl}" alt="صورة أيوب" class="w-32 h-32 object-cover rounded-xl border-2 border-blue-400" />
+                <p class="text-2xl font-bold text-white">${ayoubProfile.name}</p>
+                <div class="flex justify-center space-x-6" id="ayoubSocialMediaLinksInner"></div>
+            `;
+            newContentContainer.appendChild(ayoubCard);
+
+            // إعادة عرض روابط التواصل الاجتماعي لأيوب داخل البطاقة الجديدة
+            const ayoubSocialMediaLinksInner = ayoubCard.querySelector('#ayoubSocialMediaLinksInner');
+            socialMediaPlatforms.forEach(platform => {
+                const url = ayoubProfile.socialMedia[platform.id];
+                if (url && url.trim() !== "") {
+                    const linkElement = document.createElement('a');
+                    linkElement.href = url;
+                    linkElement.target = "_blank";
+                    linkElement.className = `${platform.colorClass} ${platform.hoverColorClass} transition-colors duration-200`;
+                    linkElement.innerHTML = `<i class="${platform.iconClass} text-3xl"></i>`;
+                    ayoubSocialMediaLinksInner.appendChild(linkElement);
+                }
+            });
+
+            // 2. زر المساعدة
+            const helpButtonElement = document.createElement('button');
+            helpButtonElement.id = 'helpButtonAboutPage'; // ID مختلف لتجنب التعارض
+            helpButtonElement.className = 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 mb-12';
+            helpButtonElement.textContent = 'مساعدة';
+            helpButtonElement.addEventListener('click', () => {
+                showSection(helpPage);
+                displayHelpPage();
+            });
+            newContentContainer.appendChild(helpButtonElement);
+
+
+            // 3. قسم تحميل لعبة Rusted Warfare
+            const rustedWarfareSection = document.createElement('div');
+            rustedWarfareSection.className = "w-full max-w-md bg-gray-700 rounded-lg shadow-xl p-6 text-center mb-8";
+            rustedWarfareSection.innerHTML = `
+                <h4 class="text-white text-xl font-bold mb-4">تحميل لعبة Rusted Warfare</h4>
+                <div class="flex flex-col space-y-4">
+                    <a href="https://play.google.com/store/apps/details?id=com.corrodinggames.rts" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <i class="fab fa-google-play mr-2"></i> تحميل من متجر بلاي
+                    </a>
+                    <a href="https://store.steampowered.com/app/640380/Rusted_Warfare__RTS/" target="_blank" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <i class="fab fa-steam mr-2"></i> تحميل من ستيم
+                    </a>
+                </div>
+                <div class="mt-6">
+                    <h5 class="text-white text-lg font-semibold mb-2">مجموعة اللعبة على تليجرام:</h5>
+                    <a href="https://t.me/rusted_warfare_G" target="_blank" class="text-blue-400 hover:text-blue-200 transition-colors duration-200 text-lg flex items-center justify-center">
+                        <i class="fab fa-telegram mr-2 text-2xl"></i> Rusted Warfare Group
+                    </a>
+                </div>
+            `;
+            newContentContainer.appendChild(rustedWarfareSection);
+
+            aboutPage.appendChild(newContentContainer); // إضافة الحاوية الجديدة لصفحة حول
+        }
+
+
+        // دالة لعرض صفحة المساعدة
+        function displayHelpPage() {
+            helpProfilesContainer.innerHTML = ''; // مسح الملفات الشخصية السابقة
+            allProfilesData.forEach(profile => { // عرض جميع الملفات الشخصية هنا
+                const profileCard = createProfileCard(profile);
+                helpProfilesContainer.appendChild(profileCard);
+            });
+        }
+
+
+        // معالج حدث لزر البحث (بحث الصفحة الرئيسية)
+        searchButton.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                showSection(resultsPage); // إظهار صفحة النتائج
+                displaySearchResults(query); // عرض البطاقات المفلترة
+            } else {
+                // إذا كان البحث فارغًا، ابق في الصفحة الرئيسية
+                showSection(searchModule);
+                mainImage.classList.remove('hidden');
+                featuredCardsContainer.classList.remove('hidden');
+                bottomNavBar.classList.remove('hidden');
+            }
+        });
+
+        // معالجات الأحداث لأزرار الرجوع
+        backButton.addEventListener('click', () => {
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+            searchInput.value = ''; // مسح مربع البحث
+        });
+        backButtonExplore.addEventListener('click', () => {
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+        });
+        backButtonNotifications.addEventListener('click', () => {
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+        });
+        backButtonAbout.addEventListener('click', () => { // زر الرجوع من صفحة حول
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+        });
+        backButtonHelp.addEventListener('click', () => { // زر الرجوع من صفحة المساعدة
+            showSection(aboutPage); // العودة لصفحة حول
+            displayAboutPage(); // إعادة عرض محتوى صفحة حول
+        });
+        backButtonArticleDetail.addEventListener('click', () => {
+            // تحديد الصفحة التي يجب العودة إليها (يمكن تحسين هذا ليتذكر الصفحة السابقة بالضبط)
+            // حاليا، نعود إلى الصفحة الرئيسية
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+        });
+
+
+        // معالجات الأحداث لأيقونات شريط التنقل السفلي
+        navSearch.addEventListener('click', () => {
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+            searchInput.value = ''; // مسح مربع البحث
+        });
+        navExplore.addEventListener('click', () => {
+            showSection(explorePage);
+            displayExploreArticles(); // عرض مقالات استكشف عند الانتقال للصفحة
+        });
+        navNotifications.addEventListener('click', () => {
+            showSection(notificationsPage);
+        });
+        navAbout.addEventListener('click', () => { // أيقونة 'حول' في الشريط السفلي
+            showSection(aboutPage);
+            displayAboutPage(); // عرض صفحة حول عند الانتقال للصفحة
+        });
+
+        // اختياري: السماح بالضغط على زر Enter للبحث
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                searchButton.click();
+            }
+        });
+
+        // عند تحميل الصفحة لأول مرة: عرض صفحة البحث الرئيسية والبطاقات المميزة
+        window.onload = () => {
+            showSection(searchModule);
+            mainImage.classList.remove('hidden');
+            featuredCardsContainer.classList.remove('hidden');
+            displayFeaturedCards(); // عرض البطاقات المميزة عند تحميل الصفحة
+        };
+    </script>
 </body>
 </html>
